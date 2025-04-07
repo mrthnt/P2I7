@@ -46,9 +46,9 @@ class GUI:
     def update(self,frame):
         for i in range(len(simulation.liste_de_poissons)):
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
-            new_faces = create_pyramid(pos, self.size)
-            pyramid.set_verts(new_faces)
-        return self.pyramids
+            nouvelles_faces = faces_tetra(pos, vit)
+            self.poly[i].set_verts(nouvelles_faces)
+        return self.poly
         
     def faces_tetra(pos,vit,size=1.0):
     """
