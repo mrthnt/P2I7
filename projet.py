@@ -19,7 +19,6 @@ class Boid :
         self.dt = dt
         self.initialisation_matrices()
         
-        
     def initialisation_matrices(self):
         self.positions = np.zeros((self.N+1, 3))
         self.vitesses = np.zeros((self.N+1, 3))
@@ -32,6 +31,10 @@ class Boid :
         text = "Positions :\n" + str(self.positions) + "\nVitesses :\n" + str(self.vitesses) + "\nAccelerations :\n" + str(self.accelerations)
         return text
 
+    def distance(self, boid, i): 	#distance avec un boid à l'indice i
+        diff_position = self.positions[i] - boid.positions[i]
+        norme = np.linalg.norm(diff_position)
+        return norme
 
 
 class Poisson(Boid):
@@ -44,11 +47,12 @@ class Poisson(Boid):
 
 
 
-  # test des 3 classes
+  # test de classes
 def test_de_classes():
     poisson1 = Poisson([0, 0, 1], [0, 0, 0], 10, 3, 20, 5, 0.1)
     poisson2 = Poisson([0, 2, 0], [0, 0, 0], 10, 3, 20, 5, 0.1)
     print(poisson1)
     print(poisson2)
 
-
+    distance = poisson1.distance(poisson2, 0)
+    print(distance) 
