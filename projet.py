@@ -16,8 +16,9 @@ class Boid :
         self.position_initiale = position_initiale
         self.vitesse_initiale = vitesse_initiale
         self.N = N
-        self.initialisation_matrices()
         self.dt = dt
+        self.initialisation_matrices()
+        
         
     def initialisation_matrices(self):
         self.positions = np.zeros((self.N+1, 3))
@@ -41,4 +42,13 @@ class Poisson(Boid):
         self.R_repulsion_poisson = R_repulsion_poisson
         self.v_max = v_max
 
-  
+
+
+  # test des 3 classes
+def test_de_classes():
+    poisson1 = Poisson([0, 0, 1], [0, 0, 0], 10, 3, 20, 5, 0.1)
+    poisson2 = Poisson([0, 2, 0], [0, 0, 0], 10, 3, 20, 5, 0.1)
+    print(poisson1)
+    print(poisson2)
+
+
