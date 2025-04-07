@@ -48,7 +48,7 @@ class GUI:
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
             nouvelles_faces = faces_tetra(pos, vit)
             self.poly[i].set_verts(nouvelles_faces)
-        return self.poly
+        return self.poly # rajouter pour liste_de_predateurs , vérifier code bon, écrire init_tetra, rajouter le bail de size
         
     def faces_tetra(pos,vit,size=1.0):
     """
