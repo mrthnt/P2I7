@@ -7,6 +7,7 @@ class Simulation :
     def __init__(self, liste_de_poissons, liste_de_predateurs, N):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
+        self.N = N
 
     def voisin_le_plus_proche(self, p, i): 			# i est l'indice temporel concerné de la matrice positions
         poisson_1 = self.liste_de_poissons[p]		# p est l'indice du poisson concerné dans liste_de_poissons
@@ -21,7 +22,73 @@ class Simulation :
                     poisson_voisin = poisson_2
         return poisson_voisin
 
+class GUI:
+    def __init__(self, simulation):
+        self.simulation = simulation
 
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        self.ax.set_xlim([-2, 2])
+        self.ax.set_ylim([-2, 2])
+        self.ax.set_zlim([0, 2])
+        self.ax.set_box_aspect([1, 1, 1])
+
+        self.poly = []
+        self.init_poly()
+
+        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
+        plt.show()
+    
+    
+    def init_tetra(self):
+        pass
+    
+    def update(self):
+        pass
+        
+    def faces_tetra(pos,vit,size=1.0):
+    """
+
+    Args:
+        pos (tuple): tuple contenant x,y,z les coordonées du boid
+        vit (tuple): tuple contenant vx,vy,vz correspondant au vecteur vitesse du boid
+        size (float, optional): facteur de taille du boid
+
+    Returns:
+        coordonées des faces d'un tetraedre représentant le boid
+    """
+        x, y, z = pos
+        xvit, yvit, zvit = vit
+        h = 50*size             #hauteur du tetraedre
+        H = 30*size             #hauteur de la base
+        L = 2/np.sqrt(3)*H      #largeur d'un coté de la base
+    
+        #si vitesse nulle attention à ne pas diviser par une norme nulle -> direction par défaut = (1,0,0)
+        if xvit==0 and yvit==0 and zvit==0: 
+            xvit = 1
+            yvit = 0
+            zvit = 0
+        norme_vit = np.sqrt(xvit**2+yvit**2+zvit**2)
+    
+        #on cherche trois vecteurs orthonormaux avec 1 selon la direction du boid:
+        xa, ya, za = xvit/norme_vit, yvit/norme_vit, zvit/norme_vit     #selon la direction/vitesse
+        xb, yb, zb = -ya, xa, 0                                         #vecteur orthogonal choisi arbitrairement
+        xc, yc, zc = -za*xa, -ya*za, xa**2 + ya**2                      #produit vectoriel simplifié des deux précédents
+
+        xbase, ybase, zbase = x - xa*h/3, y - ya*h/3, z - za*h/3        #coordonées du centre de la base du tetraedre
+    
+        #on calcule les points limites de la base et celui de l'apex du tetraedre:
+        base = [[xbase + xb*2/3*H,ybase + yb*2/3*H,zbase + zb*2/3*H],[xbase - xb*H/3 + L/2*xc,ybase -yb*H/3 + L/2*yc,zbase -zb*H/3 + L/2*zc],[xbase - xb*H/3 - L/2*xc,ybase -yb*H/3 - L/2*yc,zbase -zb*H/3 -L/2*zc]]
+        apex = [x + 2/3*h*xa, y + 2/3*h*ya, z + 2/3*h*za]
+    
+        #on renseigne les faces du tetraedre
+        faces = [
+            [base[0], base[1], base[2]],  # face de la base
+            [base[0], base[1], apex],     # faces qui coincident avec l'apex
+            [base[1], base[2], apex],
+            [base[2], base[0], apex]
+        ]
+        return faces
 
 class Boid :
     
