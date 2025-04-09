@@ -34,6 +34,17 @@ class GUI:
         self.ax.set_zlim([-200, 200])
         self.ax.set_box_aspect([1, 1, 1])
 
+        self.ax.grid(False)
+        self.ax.xaxis.pane.fill = False
+        self.ax.yaxis.pane.fill = False
+        self.ax.zaxis.pane.fill = False
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
+        self.ax.set_zticks([])
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+        self.ax.set_zlabel('Z')
+
         self.tetras = []
         self.init_tetras()
 
