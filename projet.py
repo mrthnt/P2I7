@@ -44,13 +44,13 @@ class GUI:
     def init_tetras(self):
         for poisson in self.simulation.liste_de_poissons:
             pos, vit = poisson.position_initiale, poisson.vitesse_initiale
-            faces = faces_tetra(pos, vit)
+            faces = self.faces_tetra(pos, vit)
             tetra = Poly3DCollection(faces, facecolors='orange', edgecolors = 'k', alpha = 0.8)
             self.ax.add_collection3d(tetra)
             self.tetras.append(tetra)
         for predateur in self.simulation.liste_de_predateurs:
             pos, vit = predateur.position_initiale, predateur.vitesse_initiale
-            faces = faces_tetra(pos, vit)
+            faces = self.faces_tetra(pos, vit)
             tetra = Poly3DCollection(faces, facecolors='orange', edgecolors = 'k', alpha = 0.8)
             self.ax.add_collection3d(tetra)
             self.tetras.append(tetra)
@@ -58,11 +58,11 @@ class GUI:
     def update(self,frame):
         for i in range(len(self.simulation.liste_de_poissons)):
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
-            nouvelles_faces = faces_tetra(pos, vit)
+            nouvelles_faces = self.faces_tetra(pos, vit)
             self.tetras[i].set_verts(nouvelles_faces)
         for j in range(len(self.simulation.liste_de_predateurs)):
             pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
-            nouvelles_faces = faces_tetra(pos, vit)
+            nouvelles_faces = self.faces_tetra(pos, vit)
             self.tetras[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
         return self.tetras #rajouter le bail de size
         
