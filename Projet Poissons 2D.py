@@ -149,7 +149,7 @@ def jeu_de_test():
     poisson2 = Poisson([2, 2], [5, 0], 10, 3, 20)
     poisson3 = Poisson([0, 0], [1, -3], 10, 3, 20)
     
-    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5, , 0.1)
+    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5, 0.1)
     
     print(poisson1)
     print()
