@@ -44,14 +44,14 @@ class GUI:
         pass
     
     def update(self,frame):
-        for i in range(len(simulation.liste_de_poissons)):
+        for i in range(len(self.simulation.liste_de_poissons)):
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
             nouvelles_faces = faces_tetra(pos, vit)
             self.poly[i].set_verts(nouvelles_faces)
-        for j in range(len(simulation.liste_de_predateurs)):
+        for j in range(len(self.simulation.liste_de_predateurs)):
             pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
             nouvelles_faces = faces_tetra(pos, vit)
-            self.poly[j+len(simulation.liste_de_poissons)].set_verts(nouvelles_faces)
+            self.poly[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
         return self.poly #écrire init_tetra, rajouter le bail de size
         
     def faces_tetra(pos,vit,size=1.0):
