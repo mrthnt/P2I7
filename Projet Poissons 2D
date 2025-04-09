@@ -82,7 +82,13 @@ class Simulation :
                     poisson_voisin = poisson_2
         return poisson_voisin
                     
-    #def centre_masse_poisson
+    def centre_masse_poisson(self, i): # i est l'indice temporel concerné de la matrice positions
+        point_centre = np.zeros((2))
+        for poisson in self.liste_de_poissons :
+            point_centre += poisson.positions[i]
+        point_centre = point_centre / len(self.liste_de_poissons)
+        return point_centre
+        
                                      # A FAIRE
     #def vitesse_banc_poisson
 
