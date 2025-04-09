@@ -57,17 +57,34 @@ class GUI:
 
         self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
         plt.show()
+    #####
+    MODIFIER LA SUITE POUR AFFICHER EN 2D
+    ####
     
+    def init_tetras(self):
+        for poisson in self.simulation.liste_de_poissons:
+            pos, vit = poisson.position_initiale, poisson.vitesse_initiale
+            faces = self.faces_tetra(pos, vit)
+            tetra = PolyCollection(faces, facecolors='orange', edgecolors = 'k', alpha = 0.8)
+            self.ax.add_collection3d(tetra)
+            self.tetras.append(tetra)
+        for predateur in self.simulation.liste_de_predateurs:
+            pos, vit = predateur.position_initiale, predateur.vitesse_initiale
+            faces = self.faces_tetra(pos, vit)
+            tetra = PolyCollection(faces, facecolors='orange', edgecolors = 'k', alpha = 0.8)
+            self.ax.add_collection3d(tetra)
+            self.tetras.append(tetra)
     
-    def init_tetra(self):
-        pass
-    
-    # def update(self,frame):
-        # for i in range(len(simulation.liste_de_poissons)):
-        #     pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
-        #     nouvelles_faces = self.faces_tetra(pos, vit)
-        #     self.poly[i].set_verts(nouvelles_faces)
-        # return self.poly # rajouter pour liste_de_predateurs , vérifier code bon, écrire init_tetra, rajouter le bail de size
+    def update(self,frame):
+        for i in range(len(self.simulation.liste_de_poissons)):
+            pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
+            nouveau_triangle = self.triangle(pos, vit)
+            self.tetras[i].set_verts(nouveau_triangle)
+        for j in range(len(self.simulation.liste_de_predateurs)):
+            pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
+            nouvelles_faces = self.faces_tetra(pos, vit)
+            self.tetras[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
+        return self.tetras #rajouter le bail de size
         
     def triangle(pos,vit,size=1.0):
         """
