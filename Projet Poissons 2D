@@ -21,15 +21,19 @@ class Simulation :
                     poisson_voisin = poisson_2
         return poisson_voisin
                     
-    def centre_masse_poisson(self, i): # i est l'indice temporel concerné de la matrice positions
+    def centre_masse_poissons(self, i): # i est l'indice temporel concerné de la matrice positions
         point_centre = np.zeros((2))
         for poisson in self.liste_de_poissons :
             point_centre += poisson.positions[i]
         point_centre = point_centre / len(self.liste_de_poissons)
         return point_centre
         
-                                     # A FAIRE
-    #def vitesse_banc_poisson
+    def vitesse_banc_poissons(self, i): # i est l'indice temporel concerné de la matrice positions
+        vitesse_moy = np.zeros((2))
+        for poisson in self.liste_de_poissons :
+            vitesse_moy += poisson.vitesses[i]
+        vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
+        return vitesse_moy
 
 
 
@@ -69,21 +73,26 @@ class Poisson(Boid):
 
 
 def jeu_de_test():
-  poisson1 = Poisson([-1, -2], [0, 0], 10, 3, 20, 5, 0.1)
-  poisson2 = Poisson([2, 2], [0, 0], 10, 3, 20, 5, 0.1)
-  poisson3 = Poisson([0, 0], [1, 0], 10, 3, 20, 5, 0.1)
-  
-  la_simu = Simulation([poisson1, poisson2, poisson3], [], 5)
-  
-  print(poisson1)
-  print()
-  print(poisson2)
-  print()
-  
-  distance = poisson1.distance(poisson2, 0)
-  print(distance)
-  print()
-  
-  poisson_voisin = la_simu.voisin_le_plus_proche(0, 0)
-  print(poisson_voisin)
-
+    poisson1 = Poisson([-1, -2], [0, 0], 10, 3, 20, 5, 0.1)
+    poisson2 = Poisson([2, 2], [5, 0], 10, 3, 20, 5, 0.1)
+    poisson3 = Poisson([0, 0], [1, -3], 10, 3, 20, 5, 0.1)
+    
+    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5)
+    
+    print(poisson1)
+    print()
+    print(poisson2)
+    print()
+    
+    distance = poisson1.distance(poisson2, 0)
+    print(distance)
+    print()
+    
+    poisson_voisin = la_simu.voisin_le_plus_proche(0, 0)
+    print(poisson_voisin)
+    print()
+    
+    centre = la_simu.centre_masse_poissons(0)
+    print(centre)
+    v_moy = la_simu.vitesse_banc_poissons(0)
+    print(v_moy)
