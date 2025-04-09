@@ -150,19 +150,22 @@ class Poisson(Boid):
   # test de classes
 def test_de_classes():
     poisson1 = Poisson([0, 0, 1], [0, 0, 0], 10, 3, 20, 5, 0.1)
-    poisson2 = Poisson([0, 2, 0], [0, 0, 0], 10, 3, 20, 5, 0.1)
+    poisson2 = Poisson([2, 2, 0], [0, 0, 0], 10, 3, 20, 5, 0.1)
+    poisson3 = Poisson([0, 0, 0], [1, 0, 0], 10, 3, 20, 5, 0.1)
+    
+    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5)
+    
     print(poisson1)
     print()
     print(poisson2)
     print()
-
+    
     distance = poisson1.distance(poisson2, 0)
-    print(distance) 
+    print(distance)
     print()
-
+    
     poisson_voisin = la_simu.voisin_le_plus_proche(0, 0)
     print(poisson_voisin)
-
 
 
 
