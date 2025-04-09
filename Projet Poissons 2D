@@ -1,5 +1,32 @@
 import numpy as np
 
+
+class Simulation :
+    
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N):
+        self.liste_de_poissons = liste_de_poissons
+        self.liste_de_predateurs = liste_de_predateurs
+        self.N = N
+        
+    def voisin_le_plus_proche(self, p, i): 			# i est l'indice temporel concerné de la matrice positions
+        poisson_1 = self.liste_de_poissons[p]		# p est l'indice du poisson concerné dans liste_de_poissons
+        poisson_voisin = None
+        distance_min = np.inf
+        for n in range(len(self.liste_de_poissons)):
+            if n != p :
+                poisson_2 = self.liste_de_poissons[n]
+                distance = poisson_1.distance(poisson_2, i)
+                if distance < distance_min :
+                    distance_min = distance
+                    poisson_voisin = poisson_2
+        return poisson_voisin
+                    
+    #def centre_masse_poisson
+                                     # A FAIRE
+    #def vitesse_banc_poisson
+
+
+
 class Boid :
     
     def __init__(self, position_initiale, vitesse_initiale, N, dt):
