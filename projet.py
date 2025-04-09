@@ -67,16 +67,16 @@ class GUI:
         return self.tetras #rajouter le bail de size
         
     def faces_tetra(pos,vit,size=1.0):
-    """
+        """
 
-    Args:
-        pos (tuple): tuple contenant x,y,z les coordonées du boid
-        vit (tuple): tuple contenant vx,vy,vz correspondant au vecteur vitesse du boid
-        size (float, optional): facteur de taille du boid
+        Args:
+            pos (tuple): tuple contenant x,y,z les coordonées du boid
+            vit (tuple): tuple contenant vx,vy,vz correspondant au vecteur vitesse du boid
+            size (float, optional): facteur de taille du boid
 
-    Returns:
-        coordonées des faces d'un tetraedre représentant le boid
-    """
+        Returns:
+            coordonées des faces d'un tetraedre représentant le boid
+        """
         x, y, z = pos
         xvit, yvit, zvit = vit
         h = 50*size             #hauteur du tetraedre
