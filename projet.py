@@ -66,7 +66,7 @@ class GUI:
             self.tetras[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
         return self.tetras #rajouter le bail de size
         
-    def faces_tetra(pos,vit,size=1.0):
+    def faces_tetra(self,pos,vit,size=1.0):
         """
 
         Args:
