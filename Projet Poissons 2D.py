@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 class Simulation :
     
@@ -48,7 +49,7 @@ class GUI:
         self.poly = []
         self.init_poly()
 
-        self.ani = plt.FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
+        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
         plt.show()
     
     
