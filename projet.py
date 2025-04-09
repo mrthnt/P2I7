@@ -29,9 +29,9 @@ class GUI:
 
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
-        self.ax.set_xlim([-2, 2])
-        self.ax.set_ylim([-2, 2])
-        self.ax.set_zlim([0, 2])
+        self.ax.set_xlim([-200, 200])
+        self.ax.set_ylim([-200, 200])
+        self.ax.set_zlim([-200, 200])
         self.ax.set_box_aspect([1, 1, 1])
 
         self.tetras = []
