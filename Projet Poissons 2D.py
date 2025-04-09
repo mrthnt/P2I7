@@ -4,10 +4,16 @@ from matplotlib.animation import FuncAnimation
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
         self.N = N
+        self.dt = dt
+        self.initialiser_matrices_poissons()
+        
+    def initialiser_matrices_poissons(self):
+        for poisson in self.liste_de_poissons:
+            poisson.ajouter_simulation(self)
         
     def voisin_le_plus_proche(self, p, i): 			# i est l'indice temporel concerné de la matrice positions
         poisson_1 = self.liste_de_poissons[p]		# p est l'indice du poisson concerné dans liste_de_poissons
@@ -103,18 +109,20 @@ class GUI:
 
 class Boid :
     
-    def __init__(self, position_initiale, vitesse_initiale, N, dt):
-        self.N = N
-        self.dt = dt
-        self.initialisation_matrices(position_initiale, vitesse_initiale)
+    def __init__(self, position_initiale, vitesse_initiale):
+        self.position_initiale = position_initiale
+        self.vitesse_initiale = vitesse_initiale
         
-    def initialisation_matrices(self, position_initiale, vitesse_initiale):
-        self.positions = np.zeros((self.N+1, 2))
-        self.vitesses = np.zeros((self.N+1, 2))
-        self.accelerations = np.zeros((self.N+1, 2))
+    def ajouter_simulation(self, simulation):
+        self.simulation = simulation
+        self.initialisation_matrices()
         
-        self.positions[0] = position_initiale
-        self.vitesses[0] = vitesse_initiale
+    def initialisation_matrices(self):
+        self.positions = np.zeros((self.simulation.N+1, 2))
+        self.vitesses = np.zeros((self.simulation.N+1, 2))
+        self.accelerations = np.zeros((self.simulation.N+1, 2))
+        self.positions[0] = self.position_initiale
+        self.vitesses[0] = self.vitesse_initiale
 
     def __str__(self):
         text = "Positions :\n" + str(self.positions) + "\nVitesses :\n" + str(self.vitesses) + "\nAccelerations :\n" + str(self.accelerations)
@@ -128,8 +136,8 @@ class Boid :
 
 class Poisson(Boid):
     
-    def __init__(self, position_initiale, vitesse_initiale, R_attraction_poisson, R_repulsion_poisson, v_max, N, dt):
-        super().__init__(position_initiale, vitesse_initiale, N, dt)
+    def __init__(self, position_initiale, vitesse_initiale, R_attraction_poisson, R_repulsion_poisson, v_max):
+        super().__init__(position_initiale, vitesse_initiale)
         self.R_attraction_poisson = R_attraction_poisson
         self.R_repulsion_poisson = R_repulsion_poisson
         self.v_max = v_max
@@ -137,11 +145,11 @@ class Poisson(Boid):
 
 
 def jeu_de_test():
-    poisson1 = Poisson([-1, -2], [0, 0], 10, 3, 20, 5, 0.1)
-    poisson2 = Poisson([2, 2], [5, 0], 10, 3, 20, 5, 0.1)
-    poisson3 = Poisson([0, 0], [1, -3], 10, 3, 20, 5, 0.1)
+    poisson1 = Poisson([-1, -2], [0, 0], 10, 3, 20)
+    poisson2 = Poisson([2, 2], [5, 0], 10, 3, 20)
+    poisson3 = Poisson([0, 0], [1, -3], 10, 3, 20)
     
-    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5)
+    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5, , 0.1)
     
     print(poisson1)
     print()
