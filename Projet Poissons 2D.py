@@ -51,7 +51,7 @@ class GUI:
         self.simulation = simulation
 
         self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(11, projection='2d')
+        self.ax = self.fig.add_subplot(11)
         self.ax.set_xlim([-2, 2])
         self.ax.set_ylim([-2, 2])
         self.ax.set_box_aspect([1, 1])
@@ -61,23 +61,20 @@ class GUI:
 
         self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
         plt.show()
-    #####
-    MODIFIER LA SUITE POUR AFFICHER EN 2D
-    ####
     
     def init_tetras(self):
         for poisson in self.simulation.liste_de_poissons:
             pos, vit = poisson.position_initiale, poisson.vitesse_initiale
-            faces = self.faces_tetra(pos, vit)
-            tetra = PolyCollection(faces, facecolors='orange', edgecolors = 'k', alpha = 0.8)
-            self.ax.add_collection3d(tetra)
-            self.tetras.append(tetra)
+            triangles = self.triangle(pos, vit)
+            forme = PolyCollection(triangles, facecolors='orange', edgecolors = 'k', alpha = 0.8)
+            self.ax.add_collection(forme)
+            self.poly.append(forme)
         for predateur in self.simulation.liste_de_predateurs:
             pos, vit = predateur.position_initiale, predateur.vitesse_initiale
-            faces = self.faces_tetra(pos, vit)
-            tetra = PolyCollection(faces, facecolors='orange', edgecolors = 'k', alpha = 0.8)
-            self.ax.add_collection3d(tetra)
-            self.tetras.append(tetra)
+            triangles = self.triangle(pos, vit)
+            forme = PolyCollection(triangles, facecolors='orange', edgecolors = 'k', alpha = 0.8)
+            self.ax.add_collection(forme)
+            self.poly.append(forme)
     
     def update(self,frame):
         for i in range(len(self.simulation.liste_de_poissons)):
