@@ -25,15 +25,15 @@ class Simulation :
 
 class GUI:
     def __init__(self, simulation):
-        self.simulation = simulation
-
+        self.simulation = simulation #assigne la simulation
+                    #initialisation figure
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
         self.ax.set_xlim([-200, 200])
         self.ax.set_ylim([-200, 200])
         self.ax.set_zlim([-200, 200])
         self.ax.set_box_aspect([1, 1, 1])
-
+                    #réglages d'affichage
         self.ax.grid(False)
         self.ax.xaxis.pane.fill = False
         self.ax.yaxis.pane.fill = False
@@ -44,15 +44,18 @@ class GUI:
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         self.ax.set_zlabel('Z')
-
+                    #initialisation des tetraèdres représentant les boids
         self.tetras = []
         self.init_tetras()
-
-        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
+                    #animation des tetraèdres représentant les boids
+        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=True)
         plt.show()
     
     
     def init_tetras(self):
+        """
+        Intialise les tetraedres
+        """
         for poisson in self.simulation.liste_de_poissons:
             pos, vit = poisson.position_initiale, poisson.vitesse_initiale
             faces = self.faces_tetra(pos, vit)
@@ -67,6 +70,13 @@ class GUI:
             self.tetras.append(tetra)
     
     def update(self,frame):
+        """
+        Met à jour les coordonnées des tetraedres
+        Args:
+            frame: frame renseignée de l'animation au temps i
+        Returns:
+            self.tetras : liste des coordonnées des tetraedres représentant les boids
+        """
         for i in range(len(self.simulation.liste_de_poissons)):
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
             nouvelles_faces = self.faces_tetra(pos, vit)
@@ -79,14 +89,13 @@ class GUI:
         
     def faces_tetra(self,pos,vit,size=1.0):
         """
-
         Args:
-            pos (tuple): tuple contenant x,y,z les coordonées du boid
+            pos (tuple): tuple contenant x,y,z les coordonnées du boid
             vit (tuple): tuple contenant vx,vy,vz correspondant au vecteur vitesse du boid
             size (float, optional): facteur de taille du boid
 
         Returns:
-            coordonées des faces d'un tetraedre représentant le boid
+            coordonnées des faces d'un tetraedre représentant le boid
         """
         x, y, z = pos
         xvit, yvit, zvit = vit
