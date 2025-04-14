@@ -2,12 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from matplotlib.animation import FuncAnimation
-
-N = 500
-poisson = Poisson([0, 0], [0, 1], 10, 3, 20)
-simu = Simulation([poisson],[],N, 0.1)
-simu.initialiser_matrices_poissons()
-gui = GUI(simu)
+import random as rng
 
 class Simulation :
     
