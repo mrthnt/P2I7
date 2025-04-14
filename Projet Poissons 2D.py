@@ -64,6 +64,10 @@ class GUI:
         plt.show()
     
     def init_triangles(self):
+        """
+        Cree les triangles des boids
+        
+    """
         for poisson in self.simulation.liste_de_poissons:
             pos, vit = poisson.position_initiale, poisson.vitesse_initiale
             coords = self.coords_triangle(pos, vit)
@@ -78,6 +82,14 @@ class GUI:
             self.triangles.append(triangle)
     
     def update(self,frame):
+        """
+        Met  à jour les triangles des boids
+    Args:
+        frame : frame actuelle de l'animation'
+
+    Returns:
+        self.triangles : les coordonnées des triangles représentant les boids
+    """
         for i in range(len(self.simulation.liste_de_poissons)):
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
             new_coords = self.coords_triangle(pos, vit)
@@ -91,14 +103,14 @@ class GUI:
     
     def coords_triangle(self,pos,vit,size=1.0):
         """
-
+        Calcule les coordonnées du triangle représentant le boid et l'aligne avec sa vitesse'
     Args:
-        pos (tuple): tuple contenant x,y les coordonées du boid
+        pos (tuple): tuple contenant x,y les coordonnées du boid
         vit (tuple): tuple contenant vx,vy correspondant au vecteur vitesse du boid
         size (float, optional): facteur de taille du boid
 
     Returns:
-        coordonées des faces d'un triangle représentant le boid
+        triangle : coordonnées des faces d'un triangle représentant le boid
     """
         x, y = pos
         xvit, yvit = vit
