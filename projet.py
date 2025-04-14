@@ -24,14 +24,14 @@ class Simulation :
         return poisson_voisin
 
 class GUI:
-    def __init__(self, simulation):
+    def __init__(self, simulation, coord_lim = 200):
         self.simulation = simulation #assigne la simulation
                     #initialisation figure
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
-        self.ax.set_xlim([-200, 200])
-        self.ax.set_ylim([-200, 200])
-        self.ax.set_zlim([-200, 200])
+        self.ax.set_xlim([-coord_lim, coord_lim])
+        self.ax.set_ylim([-coord_lim, coord_lim])
+        self.ax.set_zlim([-coord_lim, coord_lim])
         self.ax.set_box_aspect([1, 1, 1])
                     #réglages d'affichage
         self.ax.grid(False)
