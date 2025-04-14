@@ -24,7 +24,7 @@ class Simulation :
         return poisson_voisin
 
 class GUI:
-    def __init__(self, simulation, coord_lim = 200):
+    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 200):
         self.simulation = simulation #assigne la simulation
                     #initialisation figure
         self.fig = plt.figure()
@@ -48,7 +48,7 @@ class GUI:
         self.tetras = []
         self.init_tetras()
                     #animation des tetraèdres représentant les boids
-        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=True)
+        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=self.simulation.dt*1000/vitesse_lecture, blit=True)
         plt.show()
     
     
