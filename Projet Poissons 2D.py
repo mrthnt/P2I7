@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 from matplotlib.animation import FuncAnimation
 N = 500
 poisson = Poisson([0, 0], [0, 1], 10, 3, 20)
@@ -51,53 +52,53 @@ class GUI:
     def __init__(self, simulation):
         self.simulation = simulation
 
-        self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(11)
-        self.ax.set_xlim([-2, 2])
-        self.ax.set_ylim([-2, 2])
-        self.ax.set_box_aspect([1, 1])
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_xlim(-200, 200)
+        self.ax.set_ylim(-200, 200)
+        self.ax.set_aspect('equal')
 
-        self.poly = []
-        self.init_poly()
+        self.triangles = []
+        self.init_triangles()
 
-        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=10, blit=False)
+        self.ani = FuncAnimation(self.fig, self.update, frames=np.arange(0,self.simulation.N-1,1), interval=10, blit=True)
         plt.show()
     
-    def init_tetras(self):
+    def init_triangles(self):
         for poisson in self.simulation.liste_de_poissons:
             pos, vit = poisson.position_initiale, poisson.vitesse_initiale
-            triangles = self.triangle(pos, vit)
-            forme = PolyCollection(triangles, facecolors='orange', edgecolors = 'k', alpha = 0.8)
-            self.ax.add_collection(forme)
-            self.poly.append(forme)
+            coords = self.coords_triangle(pos, vit)
+            triangle = Polygon(coords, closed=True, color='skyblue')
+            self.ax.add_patch(triangle)
+            self.triangles.append(triangle)
         for predateur in self.simulation.liste_de_predateurs:
             pos, vit = predateur.position_initiale, predateur.vitesse_initiale
-            triangles = self.triangle(pos, vit)
-            forme = PolyCollection(triangles, facecolors='orange', edgecolors = 'k', alpha = 0.8)
-            self.ax.add_collection(forme)
-            self.poly.append(forme)
+            coords = self.coords_triangle(pos, vit)
+            triangle = Polygon(coords, closed=True, color='skyblue')
+            self.ax.add_patch(triangle)
+            self.triangles.append(triangle)
     
     def update(self,frame):
         for i in range(len(self.simulation.liste_de_poissons)):
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
-            nouveau_triangle = self.triangle(pos, vit)
-            self.tetras[i].set_verts(nouveau_triangle)
+            new_coords = self.coords_triangle(pos, vit)
+            self.triangles[i].set_xy(new_coords)
         for j in range(len(self.simulation.liste_de_predateurs)):
             pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
-            nouvelles_faces = self.faces_tetra(pos, vit)
-            self.tetras[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
-        return self.tetras #rajouter le bail de size
-        
-    def triangle(pos,vit,size=1.0):
+            new_coords = self.coords_triangle(pos, vit)
+            self.triangles[j+len(self.simulation.liste_de_poissons)].set_xy(new_coords)
+        return self.triangles
+    
+    
+    def coords_triangle(self,pos,vit,size=1.0):
         """
 
     Args:
-        pos (tuple): tuple contenant x,y,z les coordonées du boid
-        vit (tuple): tuple contenant vx,vy,vz correspondant au vecteur vitesse du boid
+        pos (tuple): tuple contenant x,y les coordonées du boid
+        vit (tuple): tuple contenant vx,vy correspondant au vecteur vitesse du boid
         size (float, optional): facteur de taille du boid
 
     Returns:
-        coordonées des faces d'un tetraedre représentant le boid
+        coordonées des faces d'un triangle représentant le boid
     """
         x, y = pos
         xvit, yvit = vit
