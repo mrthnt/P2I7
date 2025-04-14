@@ -75,6 +75,54 @@ class Simulation :
             vitesse_moy += poisson.vitesses[i]
         vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
         return vitesse_moy
+
+        def calcul_tableaux(self):       
+
+        for i in range(0, self.N):
+
+            for p in range(0, len(self.liste_de_poissons)):
+                
+                poisson = self.liste_de_poissons[p]
+                
+                ## Calcul accélérations au rang n+1
+                voisin = self.voisin_le_plus_proche(p, i)  ## objet du poisson le plus proche
+                dist_voisin = poisson.distance(voisin, i)     ## distance avec le poisson le plus proche 
+
+                if dist_voisin <= self.distance_seuil:         ## distance seuil à définir
+        
+                    a_cohesion = np.zeros((2))
+                    a_separation = np.zeros((2))
+                    a_alignement = np.zeros((2))
+                    
+                    ## récupération centre masse banc et vitesse banc
+                    centre_masse_banc = self.centre_masse_poissons(i)   ## centre de masse du banc de poisson 
+                    vitesse_banc = self.vitesse_banc_poissons(i)             ## vecteur vitesse du banc de poisson (je pense moyenne de la vitesse sur x puis sur y puis sur z)
+
+                    a_cohesion = self.alpha_cohesion * ( centre_masse_banc - poisson.positions[i, :])
+
+                    a_separation = self.alpha_separation * (poisson.positions[i, :] - voisin.positions[i, :]) / dist_voisin
+
+                    a_alignement = self.alpha_alignement * ( vitesse_banc - poisson.vitesses[i, :])
+
+                    poisson.accelerations[i+1, :] = a_cohesion + a_separation + a_alignement
+
+#                 else:   
+#                     n_rand = randint()
+#                     poisson.accelerations[i, :] = n_rand * self.a_max
+                
+                ## Calcul du vecteur vitesse au rang n+1
+                poisson.vitesses[i+1, :] = poisson.vitesses[i, :] + self.dt * poisson.accelerations[i+1, :]
+
+                ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
+#                 vecteur_vitesse = poisson.vitesses[i+1, :]
+#                 poisson.vitesses[i+1, :] = (poisson.vitesses[i+1, :] * poisson.v_max) / np.linalg.norm(vecteur_vitesse)
+
+                ## Calcul du vecteur position au rang n+1
+                poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
+
+
+
+
 class GUI:
     def __init__(self, simulation):
         self.simulation = simulation
