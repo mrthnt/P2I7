@@ -1,17 +1,41 @@
 import numpy as np
+import random as rng
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib.animation import FuncAnimation
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
         self.N = N
+        self.dt = dt
+        self.initialiser_matrices_poissons()
+        self.distance_seuil = distance_seuil
+        self.alpha_cohesion = alpha_cohesion
+        self.alpha_separation = alpha_separation
+        self.alpha_alignement = alpha_alignement
+        self.a_rng = a_rng
+        
+    def initialiser_matrices_poissons(self):
+        """
+        Cree la matrice des poissons
+        """
+        for poisson in self.liste_de_poissons:
+            poisson.ajouter_simulation(self)
+        
+    def voisin_le_plus_proche(self, p, i): 			
+        """
+        Renvoie le boid le plus proche
+        Args:
+            i: indice temporel concerné de la matrice positions
+            p: indice du poisson concerné dans liste_de_poissons
 
-    def voisin_le_plus_proche(self, p, i): 			# i est l'indice temporel concerné de la matrice positions
-        poisson_1 = self.liste_de_poissons[p]		# p est l'indice du poisson concerné dans liste_de_poissons
+        Returns:
+            poisson_voisin : le poisson le plus proche 
+        """
+        poisson_1 = self.liste_de_poissons[p]		
         poisson_voisin = None
         distance_min = np.inf
         for n in range(len(self.liste_de_poissons)):
@@ -22,6 +46,85 @@ class Simulation :
                     distance_min = distance
                     poisson_voisin = poisson_2
         return poisson_voisin
+                    
+    def centre_masse_poissons(self, i):
+        """
+        Renvoie le centre de masse des poissons
+        Args:
+            i: indice temporel concerné de la matrice positions
+
+        Returns:
+            point_centre : les coordonnees du centre de masse des poissons
+        """
+        point_centre = np.zeros((3))
+        for poisson in self.liste_de_poissons :
+            point_centre += poisson.positions[i]
+        point_centre = point_centre / len(self.liste_de_poissons)
+        return point_centre
+        
+    def vitesse_banc_poissons(self, i): # i est l'indice temporel concerné de la matrice positions
+        """
+        Renvoie la vitesse du banc de poissons
+        Args:
+            i: indice temporel concerné de la matrice positions
+
+        Returns:
+            vitesse_moy : les coordonnées du vecteur vitesse du banc de poissons
+        """
+        vitesse_moy = np.zeros((3))
+        for poisson in self.liste_de_poissons :
+            vitesse_moy += poisson.vitesses[i]
+        vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
+        return vitesse_moy
+
+    def calcul_tableaux(self):       
+
+        for i in range(0, self.N):
+
+            for p in range(0, len(self.liste_de_poissons)):
+                
+                poisson = self.liste_de_poissons[p]
+                
+                ## Calcul accélérations au rang n+1
+                voisin = self.voisin_le_plus_proche(p, i)  ## objet du poisson le plus proche
+                dist_voisin = poisson.distance(voisin, i)     ## distance avec le poisson le plus proche 
+
+        
+                a_cohesion = np.zeros((3))
+                a_separation = np.zeros((3))
+                a_alignement = np.zeros((3))
+                    
+                ## récupération centre masse banc et vitesse banc
+                centre_masse_banc = self.centre_masse_poissons(i)   ## centre de masse du banc de poisson 
+                vitesse_banc = self.vitesse_banc_poissons(i)             ## vecteur vitesse du banc de poisson (je pense moyenne de la vitesse sur x puis sur y puis sur z)
+
+                a_cohesion = self.alpha_cohesion * ( centre_masse_banc - poisson.positions[i, :])
+
+                a_separation = self.alpha_separation * (poisson.positions[i, :] - voisin.positions[i, :]) / dist_voisin
+
+                a_alignement = self.alpha_alignement * ( vitesse_banc - poisson.vitesses[i, :])
+                
+                n1_rand = rng.random()*2 - 1 # sur l'intervalle [-1 ; 1]
+                n2_rand = rng.random()*2 - 1
+                n3_rand = rng.random()*2 - 1
+                a_aleatoire = [n1_rand * self.a_rng, n2_rand * self.a_rng, n3_rand * self.a_rng]
+
+                poisson.accelerations[i+1, :] = a_cohesion + a_separation + a_alignement + a_aleatoire
+
+
+                
+                ## Calcul du vecteur vitesse au rang n+1
+                vecteur_vitesse = poisson.vitesses[i, :] + self.dt * poisson.accelerations[i+1, :]
+
+                ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
+                norme_vitesse = np.linalg.norm(vecteur_vitesse)
+                if norme_vitesse > poisson.v_max :
+                    poisson.vitesses[i+1, :] = (vecteur_vitesse * poisson.v_max) / norme_vitesse
+                else:
+                    poisson.vitesses[i+1, :] = vecteur_vitesse
+
+                ## Calcul du vecteur position au rang n+1
+                poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
 
 class GUI:
     def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 200):
@@ -132,17 +235,20 @@ class GUI:
 
 class Boid :
     
-    def __init__(self, position_initiale, vitesse_initiale, N, dt):
+    def __init__(self, position_initiale, vitesse_initiale):
         self.position_initiale = position_initiale
         self.vitesse_initiale = vitesse_initiale
-        self.N = N
-        self.dt = dt
+        
+    def ajouter_simulation(self, simulation):
+        self.simulation = simulation
         self.initialisation_matrices()
         
     def initialisation_matrices(self):
-        self.positions = np.zeros((self.N+1, 3))
-        self.vitesses = np.zeros((self.N+1, 3))
-        self.accelerations = np.zeros((self.N+1, 3))
+        self.positions = np.zeros((self.simulation.N+1, 3))
+        self.vitesses = np.zeros((self.simulation.N+1, 3))
+        self.accelerations = np.zeros((self.simulation.N+1, 3))
+        self.positions[0] = self.position_initiale
+        self.vitesses[0] = self.vitesse_initiale
         
         self.positions[0] = self.position_initiale
         self.vitesses[0] = self.vitesse_initiale
@@ -160,21 +266,21 @@ class Boid :
 
 class Poisson(Boid):
     
-    def __init__(self, position_initiale, vitesse_initiale, R_attraction_poisson, R_repulsion_poisson, v_max, N, dt):
-        super().__init__(position_initiale, vitesse_initiale, N, dt)
-        self.R_attraction_poisson = R_attraction_poisson
-        self.R_repulsion_poisson = R_repulsion_poisson
+       def __init__(self, position_initiale, vitesse_initiale, v_max):
+        super().__init__(position_initiale, vitesse_initiale)
         self.v_max = v_max
 
 
 
   # test de classes
-def test_de_classes():
-    poisson1 = Poisson([0, 0, 1], [0, 0, 0], 10, 3, 20, 5, 0.1)
-    poisson2 = Poisson([2, 2, 0], [0, 0, 0], 10, 3, 20, 5, 0.1)
-    poisson3 = Poisson([0, 0, 0], [1, 0, 0], 10, 3, 20, 5, 0.1)
+def test():
+    distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 1; alpha_alignement = 1; a_rng = 0.2
     
-    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5)
+    poisson1 = Poisson([-1, -2, -3], [0, 0, 0], 20)
+    poisson2 = Poisson([2, 2, 2], [5, 0, -5], 20)
+    poisson3 = Poisson([0, 0, 0], [1, -3, -7], 20)
+    
+    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5, 0.1, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     
     print(poisson1)
     print()
@@ -187,6 +293,34 @@ def test_de_classes():
     
     poisson_voisin = la_simu.voisin_le_plus_proche(0, 0)
     print(poisson_voisin)
+    print()
+    
+    centre = la_simu.centre_masse_poissons(0)
+    print(centre)
+    v_moy = la_simu.vitesse_banc_poissons(0)
+    print(v_moy)
+    print("\n")
+    
+    
+    N = 20
+    poisson4 = Poisson([-2, -2, -2], [0, 0, 0], 5)
+    poisson5 = Poisson([2, 2, 2], [0, 0, 0], 5)
+    poisson6 = Poisson([0, 0, 0], [0, 0, 0], 5)
+    
+
+    
+    nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.3, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
+    nouvelle_simu.calcul_tableaux()
+    
+    centre2 = nouvelle_simu.centre_masse_poissons(0)
+    print(centre2)    
+
+    print(poisson4)
+    print()
+    print(poisson5)
+    print()
+    print(poisson6)
+    print()
 
 
 
