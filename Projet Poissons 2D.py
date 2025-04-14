@@ -182,7 +182,7 @@ class GUI:
         return self.triangles
     
     
-    def coords_triangle(self,pos,vit,size=1.0):
+    def coords_triangle(self,pos,vit,size=0.5):
         """
         Calcule les coordonnées du triangle représentant le boid et l'aligne avec sa vitesse'
     Args:
@@ -284,7 +284,7 @@ def test_1():
     print("\n")
 
 def test_2():
-    distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 50; alpha_alignement = 0.5; a_rng = 0
+    distance_seuil = 100; alpha_cohesion = 10; alpha_separation = 500; alpha_alignement = 0.5; a_rng = 100
     N = 5000
     poisson4 = Poisson([-100, -100], [10, 10], 100)
     poisson5 = Poisson([100, 100], [-10, -10], 100)
