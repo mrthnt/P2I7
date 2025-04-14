@@ -76,7 +76,7 @@ class Simulation :
         vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
         return vitesse_moy
 
-        def calcul_tableaux(self):       
+    def calcul_tableaux(self):       
 
         for i in range(0, self.N):
 
