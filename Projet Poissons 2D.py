@@ -18,11 +18,23 @@ class Simulation :
         self.initialiser_matrices_poissons()
         
     def initialiser_matrices_poissons(self):
+        """
+        Cree la matrice des poissons
+        """
         for poisson in self.liste_de_poissons:
             poisson.ajouter_simulation(self)
         
-    def voisin_le_plus_proche(self, p, i): 			# i est l'indice temporel concerné de la matrice positions
-        poisson_1 = self.liste_de_poissons[p]		# p est l'indice du poisson concerné dans liste_de_poissons
+    def voisin_le_plus_proche(self, p, i): 			
+        """
+        Renvoie le boid le plus proche
+        Args:
+            i: indice temporel concerné de la matrice positions
+            p: indice du poisson concerné dans liste_de_poissons
+
+        Returns:
+            poisson_voisin : le poisson le plus proche 
+        """
+        poisson_1 = self.liste_de_poissons[p]		
         poisson_voisin = None
         distance_min = np.inf
         for n in range(len(self.liste_de_poissons)):
@@ -34,7 +46,15 @@ class Simulation :
                     poisson_voisin = poisson_2
         return poisson_voisin
                     
-    def centre_masse_poissons(self, i): # i est l'indice temporel concerné de la matrice positions
+    def centre_masse_poissons(self, i):
+        """
+        Renvoie le centre de masse des poissons
+        Args:
+            i: indice temporel concerné de la matrice positions
+
+        Returns:
+            point_centre : les coordonnees du centre de masse des poissons
+        """
         point_centre = np.zeros((2))
         for poisson in self.liste_de_poissons :
             point_centre += poisson.positions[i]
@@ -42,12 +62,19 @@ class Simulation :
         return point_centre
         
     def vitesse_banc_poissons(self, i): # i est l'indice temporel concerné de la matrice positions
+        """
+        Renvoie la vitesse du banc de poissons
+        Args:
+            i: indice temporel concerné de la matrice positions
+
+        Returns:
+            vitesse_moy : les coordonnées du vecteur vitesse du banc de poissons
+        """
         vitesse_moy = np.zeros((2))
         for poisson in self.liste_de_poissons :
             vitesse_moy += poisson.vitesses[i]
         vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
         return vitesse_moy
-
 class GUI:
     def __init__(self, simulation):
         self.simulation = simulation
