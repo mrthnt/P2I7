@@ -129,9 +129,10 @@ class Simulation :
 
 
 class GUI:
-    def __init__(self, simulation):
+    def __init__(self, simulation, vitesse_lecture = 1.0):
         self.simulation = simulation
-
+        self.vitesse_lecture = vitesse_lecture
+        
         self.fig, self.ax = plt.subplots()
         self.ax.set_xlim(-200, 200)
         self.ax.set_ylim(-200, 200)
@@ -140,7 +141,7 @@ class GUI:
         self.triangles = []
         self.init_triangles()
 
-        self.ani = FuncAnimation(self.fig, self.update, frames=np.arange(0,self.simulation.N-1,1), interval=10, blit=True)
+        self.ani = FuncAnimation(self.fig, self.update, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000*vitesse_lecture, blit=True)
         plt.show()
     
     def init_triangles(self):
