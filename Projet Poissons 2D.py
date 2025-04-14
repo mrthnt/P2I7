@@ -6,12 +6,17 @@ import random as rng
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
         self.N = N
         self.dt = dt
         self.initialiser_matrices_poissons()
+        self.distance_seuil = distance_seuil
+        self.alpha_cohesion = alpha_cohesion
+        self.alpha_separation = alpha_separation
+        self.alpha_alignement = alpha_alignement
+        self.a_rng = a_rng
         
     def initialiser_matrices_poissons(self):
         """
@@ -249,7 +254,7 @@ class Poisson(Boid):
 
 
 
-def test():
+def test_1():
     distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 1; alpha_alignement = 1; a_rng = 0.2
     
     poisson1 = Poisson([-1, -2], [0, 0], 20)
@@ -276,8 +281,9 @@ def test():
     v_moy = la_simu.vitesse_banc_poissons(0)
     print(v_moy)
     print("\n")
-    
-    
+
+def test_2():
+    distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 1; alpha_alignement = 1; a_rng = 0.2
     N = 20
     poisson4 = Poisson([-2, -2], [0, 0], 5)
     poisson5 = Poisson([2, 2], [0, 0], 5)
