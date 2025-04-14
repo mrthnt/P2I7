@@ -283,23 +283,15 @@ def test_1():
     print("\n")
 
 def test_2():
-    distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 1; alpha_alignement = 1; a_rng = 0.2
-    N = 20
-    poisson4 = Poisson([-2, -2], [0, 0], 5)
-    poisson5 = Poisson([2, 2], [0, 0], 5)
-    poisson6 = Poisson([0, 0], [0, 0], 5)
+    distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 50; alpha_alignement = 0.5; a_rng = 0
+    N = 5000
+    poisson4 = Poisson([-100, -100], [10, 10], 100)
+    poisson5 = Poisson([100, 100], [-10, -10], 100)
+    poisson6 = Poisson([50, 0], [0, 0], 100)
     
 
     
-    nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.3, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
+    nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     nouvelle_simu.calcul_tableaux()
     
-    centre2 = nouvelle_simu.centre_masse_poissons(0)
-    print(centre2)    
-
-    print(poisson4)
-    print()
-    print(poisson5)
-    print()
-    print(poisson6)
-    print()
+    fenetre = GUI(nouvelle_simu)
