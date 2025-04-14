@@ -295,4 +295,4 @@ def test_2():
     nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     nouvelle_simu.calcul_tableaux()
     
-    fenetre = GUI(nouvelle_simu)
+    fenetre = GUI(nouvelle_simu, vitesse_lecture = 1.0)
