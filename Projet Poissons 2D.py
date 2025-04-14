@@ -1,6 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+N = 500
+poisson = Poisson([0, 0, 1], [0, 1, -1], 10, 3, 20, N, 0.1)
+for i in range(1,N):
+    poisson.positions[i] = poisson.positions[i-1] + np.array([0,0,1])
+    poisson.vitesses[i] = poisson.vitesses[i-1]+np.array([0.01,0.01,0.01])
+simu = Simulation([poisson],[],N)
+gui = GUI(simu)
 
 class Simulation :
     
