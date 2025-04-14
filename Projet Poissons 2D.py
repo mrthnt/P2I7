@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from matplotlib.animation import FuncAnimation
+import random as rd
 N = 500
 poisson = Poisson([0, 0], [0, 1], 10, 3, 20)
 simu = Simulation([poisson],[],N, 0.1)
@@ -216,9 +217,10 @@ class GUI:
 
 class Boid :
     
-    def __init__(self, position_initiale, vitesse_initiale):
+    def __init__(self, position_initiale, vitesse_initiale, size = rd.random()+0.5):
         self.position_initiale = position_initiale
         self.vitesse_initiale = vitesse_initiale
+        self.size = size
         
     def ajouter_simulation(self, simulation):
         self.simulation = simulation
@@ -243,8 +245,8 @@ class Boid :
 
 class Poisson(Boid):
     
-    def __init__(self, position_initiale, vitesse_initiale, R_attraction_poisson, R_repulsion_poisson, v_max):
-        super().__init__(position_initiale, vitesse_initiale)
+    def __init__(self, position_initiale, vitesse_initiale, R_attraction_poisson, R_repulsion_poisson, v_max, size = rd.random()+0.5):
+        super().__init__(position_initiale, vitesse_initiale,size)
         self.R_attraction_poisson = R_attraction_poisson
         self.R_repulsion_poisson = R_repulsion_poisson
         self.v_max = v_max
