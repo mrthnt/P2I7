@@ -100,7 +100,7 @@ class Simulation :
 
                 a_cohesion = self.alpha_cohesion * ( centre_masse_banc - poisson.positions[i, :])
 
-                a_separation = self.alpha_separation * (poisson.positions[i, :] - voisin.positions[i, :]) / dist_voisin
+                a_separation = self.alpha_separation * (poisson.positions[i, :] - voisin.positions[i, :]) / dist_voisin**2
 
                 a_alignement = self.alpha_alignement * ( vitesse_banc - poisson.vitesses[i, :])
                 
@@ -141,7 +141,7 @@ class GUI:
         self.triangles = []
         self.init_triangles()
 
-        self.ani = FuncAnimation(self.fig, self.update, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000*vitesse_lecture, blit=True)
+        self.ani = FuncAnimation(self.fig, self.update, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=True)
         plt.show()
     
     def init_triangles(self):
@@ -284,11 +284,11 @@ def test_1():
     print("\n")
 
 def test_2():
-    distance_seuil = 100; alpha_cohesion = 10; alpha_separation = 500; alpha_alignement = 0.5; a_rng = 100
+    distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 100000; alpha_alignement = 50; a_rng = 1000
     N = 5000
-    poisson4 = Poisson([-100, -100], [10, 10], 100)
-    poisson5 = Poisson([100, 100], [-10, -10], 100)
-    poisson6 = Poisson([50, 0], [0, 0], 100)
+    poisson4 = Poisson([-100, -100], [10, 10], 500)
+    poisson5 = Poisson([100, 100], [-10, -10], 500)
+    poisson6 = Poisson([50, 0], [0, 0], 500)
     
 
     
