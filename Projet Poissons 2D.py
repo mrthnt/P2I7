@@ -81,6 +81,10 @@ class Simulation :
 
         for i in range(0, self.N):
 
+            ## récupération centre masse banc et vitesse banc
+            centre_masse_banc = self.centre_masse_poissons(i)   ## centre de masse du banc de poisson 
+            vitesse_banc = self.vitesse_banc_poissons(i)             ## vecteur vitesse du banc de poisson (je pense moyenne de la vitesse sur x puis sur y puis sur z)
+            
             for p in range(0, len(self.liste_de_poissons)):
                 
                 poisson = self.liste_de_poissons[p]
@@ -93,10 +97,6 @@ class Simulation :
                 a_cohesion = np.zeros((2))
                 a_separation = np.zeros((2))
                 a_alignement = np.zeros((2))
-                    
-                ## récupération centre masse banc et vitesse banc
-                centre_masse_banc = self.centre_masse_poissons(i)   ## centre de masse du banc de poisson 
-                vitesse_banc = self.vitesse_banc_poissons(i)             ## vecteur vitesse du banc de poisson (je pense moyenne de la vitesse sur x puis sur y puis sur z)
 
                 a_cohesion = self.alpha_cohesion * ( centre_masse_banc - poisson.positions[i, :])
 
