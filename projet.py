@@ -273,7 +273,7 @@ class Poisson(Boid):
 
 
   # test de classes
-def test():
+def test_1():
     distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 1; alpha_alignement = 1; a_rng = 0.2
     
     poisson1 = Poisson([-1, -2, -3], [0, 0, 0], 20)
@@ -301,26 +301,16 @@ def test():
     print(v_moy)
     print("\n")
     
-    
-    N = 20
-    poisson4 = Poisson([-2, -2, -2], [0, 0, 0], 5)
-    poisson5 = Poisson([2, 2, 2], [0, 0, 0], 5)
-    poisson6 = Poisson([0, 0, 0], [0, 0, 0], 5)
+def test_2():
+    distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 10000; alpha_alignement = 50; a_rng = 0 
+    N = 100
+    poisson4 = Poisson([-100, -100, 0], [100, 100, 50], 500)
+    poisson5 = Poisson([100, 100, 100], [-50, -100, 0], 500)
+    poisson6 = Poisson([50, 0, -100], [-20, 10, 0], 500)
     
 
     
-    nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.3, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
+    nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.004, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     nouvelle_simu.calcul_tableaux()
     
-    centre2 = nouvelle_simu.centre_masse_poissons(0)
-    print(centre2)    
-
-    print(poisson4)
-    print()
-    print(poisson5)
-    print()
-    print(poisson6)
-    print()
-
-
-
+    fenetre = GUI(nouvelle_simu, 0.01)
