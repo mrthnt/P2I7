@@ -5,8 +5,6 @@ from matplotlib.animation import FuncAnimation
 import random as rng
 from scipy.spatial import cKDTree
 
-##### FAIRE LA MOYENNE DE SUR UN PAS DE TEMPS RELATIVEMENT LONG
-
 class Simulation :
     
     def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, temps_calcul_ordre=3.0):
@@ -68,7 +66,6 @@ class Simulation :
         return vitesse_moy
 
     def calcul_tableaux(self):       
-        calcul = False
         for i in range(0, self.N):
 
             ## récupération centre masse banc et vitesse banc
@@ -116,15 +113,15 @@ class Simulation :
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
             
             temps_simu = i*self.dt
-            if temps_simu >= self.temps_calcul_ordre and calcul == False:
+            liste_parametre_ordre = []
+            while temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
                 calcul = True
                 vitesse_totale = [0,0]
                 taille_banc = len(self.liste_de_poissons)
                 for element in self.liste_de_poissons : 
                     vitesse_totale += element.vitesses[i]
-                print(vitesse_totale)
-                self.parametre_ordre = np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc))
-        
+                liste_parametre_ordre.append(np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc)))
+        self.parametre_ordre=self.mean(liste_parametre_ordre)/len(liste_parametre_ordre)
     
     
 
@@ -299,7 +296,7 @@ def test_3():
     distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 10000; alpha_alignement =5; a_rng = 1000
     N = 5000
     poissons = []
-    for i in range(50):
+    for i in range(20):
         a = rng.random()*500
         b = rng.random()*500-250
         c = rng.random()*100-250
