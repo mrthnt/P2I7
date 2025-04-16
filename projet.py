@@ -303,7 +303,7 @@ def test_1():
     
 def test_2():
     distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 10000; alpha_alignement = 50; a_rng = 0 
-    N = 100
+    N = 1000
     poisson4 = Poisson([-100, -100, 0], [100, 100, 50], 500)
     poisson5 = Poisson([100, 100, 100], [-50, -100, 0], 500)
     poisson6 = Poisson([50, 0, -100], [-20, 10, 0], 500)
@@ -313,4 +313,4 @@ def test_2():
     nouvelle_simu = Simulation([poisson4, poisson5, poisson6], [], N, 0.004, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     nouvelle_simu.calcul_tableaux()
     
-    fenetre = GUI(nouvelle_simu, 0.01)
+    fenetre = GUI(nouvelle_simu, 1)
