@@ -151,7 +151,7 @@ class GUI:
         self.tetras = []
         self.init_tetras()
                     #animation des tetraèdres représentant les boids
-        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=self.simulation.dt*1000/vitesse_lecture, blit=True)
+        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=self.simulation.dt*1000/vitesse_lecture, blit=False)
         plt.show()
     
     
