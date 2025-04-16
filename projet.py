@@ -314,3 +314,18 @@ def test_2():
     nouvelle_simu.calcul_tableaux()
     
     fenetre = GUI(nouvelle_simu, 1)
+def test_3():
+    distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 1000; alpha_alignement = 50; a_rng = 1000
+    N = 5000
+    poissons = []
+    for i in range(10):
+        a = rng.random()*500
+        b = rng.random()*500-250
+        c = rng.random()*100-250
+        d = rng.random()*100-50
+        e = rng.random()*500-250
+        f = rng.random()*100-50
+        poissons.append(Poisson([a,b,e],[c,d,f],500))
+    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
+    nouvelle_simu.calcul_tableaux()
+    fenetre = GUI(nouvelle_simu,1,500)
