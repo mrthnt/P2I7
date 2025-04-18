@@ -116,9 +116,10 @@ class Simulation :
 
 
 class GUI:
-    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 200):
+    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 200, suivi = True):
         self.simulation = simulation
         
+        self.coord_lim = coord_lim #utile pour update_suivi(frame)
         self.fig, self.ax = plt.subplots()
         self.ax.set_xlim(-coord_lim, coord_lim)
         self.ax.set_ylim(-coord_lim, coord_lim)
@@ -126,8 +127,10 @@ class GUI:
 
         self.triangles = []
         self.init_triangles()
-
-        self.ani = FuncAnimation(self.fig, self.update, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=True)
+        if suivi == True:
+            self.ani = FuncAnimation(self.fig, self.update_suivi, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=False)
+        else:
+            self.ani = FuncAnimation(self.fig, self.update_non_suivi, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=True) 
         plt.show()
     
     def init_triangles(self):
@@ -148,7 +151,28 @@ class GUI:
             self.ax.add_patch(triangle)
             self.triangles.append(triangle)
     
-    def update(self,frame):
+    def update_suivi(self,frame):
+        """
+        Met  à jour les triangles des boids
+    Args:
+        frame : frame actuelle de l'animation'
+
+    Returns:
+        self.triangles : les coordonnées des triangles représentant les boids
+    """
+        for i in range(len(self.simulation.liste_de_poissons)):
+            pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
+            new_coords = self.coords_triangle(pos, vit)
+            self.triangles[i].set_xy(new_coords)
+        for j in range(len(self.simulation.liste_de_predateurs)):
+            pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
+            new_coords = self.coords_triangle(pos, vit)
+            self.triangles[j+len(self.simulation.liste_de_poissons)].set_xy(new_coords)
+        self.ax.set_xlim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0])
+        self.ax.set_ylim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1])
+        return self.triangles
+    
+    def update_non_suivi(self,frame):
         """
         Met  à jour les triangles des boids
     Args:
@@ -166,7 +190,6 @@ class GUI:
             new_coords = self.coords_triangle(pos, vit)
             self.triangles[j+len(self.simulation.liste_de_poissons)].set_xy(new_coords)
         return self.triangles
-    
     
     def coords_triangle(self,pos,vit,size=0.5):
         """
@@ -291,6 +314,6 @@ def test_3():
         poissons.append(Poisson([a,b],[c,d],500))
     nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,500)
+    fenetre = GUI(nouvelle_simu,1,500,True)
     
 test_3()
