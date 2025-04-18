@@ -111,23 +111,24 @@ class Simulation :
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
 
 class GUI:
-    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 200):
+    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 200, suivi = True):
         self.simulation = simulation #assigne la simulation
                     #initialisation figure
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
+        self.coord_lim = coord_lim #utile pour update_suivi(frame)
         self.ax.set_xlim([-coord_lim, coord_lim])
         self.ax.set_ylim([-coord_lim, coord_lim])
         self.ax.set_zlim([-coord_lim, coord_lim])
         self.ax.set_box_aspect([1, 1, 1])
                     #réglages d'affichage
-        self.ax.grid(False)
+        self.ax.grid(True)
         self.ax.xaxis.pane.fill = False
         self.ax.yaxis.pane.fill = False
         self.ax.zaxis.pane.fill = False
-        self.ax.set_xticks([])
-        self.ax.set_yticks([])
-        self.ax.set_zticks([])
+        #self.ax.set_xticks([])
+        #self.ax.set_yticks([])
+        #self.ax.set_zticks([])
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         self.ax.set_zlabel('Z')
@@ -135,7 +136,10 @@ class GUI:
         self.tetras = []
         self.init_tetras()
                     #animation des tetraèdres représentant les boids
-        self.ani = FuncAnimation(self.fig, self.update, frames=self.simulation.N, interval=self.simulation.dt*1000/vitesse_lecture, blit=False)
+        if suivi == True:
+            self.ani = FuncAnimation(self.fig, self.update_suivi, frames=self.simulation.N, interval=self.simulation.dt*1000/vitesse_lecture, blit=False)
+        else:
+            self.ani = FuncAnimation(self.fig, self.update_non_suivi, frames=self.simulation.N, interval=self.simulation.dt*1000/vitesse_lecture, blit=False)
         plt.show()
     
     
@@ -156,7 +160,28 @@ class GUI:
             self.ax.add_collection3d(tetra)
             self.tetras.append(tetra)
     
-    def update(self,frame):
+    def update_suivi(self,frame):
+        """
+        Met à jour les coordonnées des tetraedres
+        Args:
+            frame: frame renseignée de l'animation au temps i
+        Returns:
+            self.tetras : liste des coordonnées des tetraedres représentant les boids
+        """
+        for i in range(len(self.simulation.liste_de_poissons)):
+            pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
+            nouvelles_faces = self.faces_tetra(pos, vit)
+            self.tetras[i].set_verts(nouvelles_faces)
+        for j in range(len(self.simulation.liste_de_predateurs)):
+            pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
+            nouvelles_faces = self.faces_tetra(pos, vit)
+            self.tetras[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
+        self.ax.set_xlim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0])
+        self.ax.set_ylim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1])
+        self.ax.set_zlim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][2], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][2])
+        return self.tetras #rajouter le bail de size
+    
+    def update_non_suivi(self,frame):
         """
         Met à jour les coordonnées des tetraedres
         Args:
@@ -173,7 +198,7 @@ class GUI:
             nouvelles_faces = self.faces_tetra(pos, vit)
             self.tetras[j+len(self.simulation.liste_de_poissons)].set_verts(nouvelles_faces)
         return self.tetras #rajouter le bail de size
-        
+    
     def faces_tetra(self,pos,vit,size=1.0):
         """
         Args:
@@ -299,10 +324,10 @@ def test_2():
     
     fenetre = GUI(nouvelle_simu, 1)
 def test_3():
-    distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 1000; alpha_alignement = 50; a_rng = 1000
-    N = 5000
+    distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 1000; alpha_alignement = 15; a_rng = 1000
+    N = 1000
     poissons = []
-    for i in range(10):
+    for i in range(15):
         a = rng.random()*500
         b = rng.random()*500-250
         c = rng.random()*100-250
@@ -312,5 +337,5 @@ def test_3():
         poissons.append(Poisson([a,b,e],[c,d,f],500))
     nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,500)
+    fenetre = GUI(nouvelle_simu,1,500,True)
 test_3()
