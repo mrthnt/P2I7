@@ -80,7 +80,9 @@ class Simulation :
     def calcul_tableaux(self):       
 
         for i in range(0, self.N):
-
+            ## récupération centre masse banc et vitesse banc
+            centre_masse_banc = self.centre_masse_poissons(i)   ## centre de masse du banc de poisson 
+            vitesse_banc = self.vitesse_banc_poissons(i)             ## vecteur vitesse du banc de poisson (je pense moyenne de la vitesse sur x puis sur y puis sur z)
             for p in range(0, len(self.liste_de_poissons)):
                 
                 poisson = self.liste_de_poissons[p]
@@ -88,15 +90,10 @@ class Simulation :
                 ## Calcul accélérations au rang n+1
                 voisin = self.voisin_le_plus_proche(p, i)  ## objet du poisson le plus proche
                 dist_voisin = poisson.distance(voisin, i)     ## distance avec le poisson le plus proche 
-
         
                 a_cohesion = np.zeros((3))
                 a_separation = np.zeros((3))
                 a_alignement = np.zeros((3))
-                    
-                ## récupération centre masse banc et vitesse banc
-                centre_masse_banc = self.centre_masse_poissons(i)   ## centre de masse du banc de poisson 
-                vitesse_banc = self.vitesse_banc_poissons(i)             ## vecteur vitesse du banc de poisson (je pense moyenne de la vitesse sur x puis sur y puis sur z)
 
                 a_cohesion = self.alpha_cohesion * ( centre_masse_banc - poisson.positions[i, :])
 
