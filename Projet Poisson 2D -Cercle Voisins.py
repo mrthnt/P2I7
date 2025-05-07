@@ -432,17 +432,49 @@ def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5
     N = 500
-    poissons = []
-    for i in range(25):
-        a = rng.random()*500
-        b = rng.random()*500-250
-        c = rng.random()*100-250
-        d = rng.random()*100-50
-        poissons.append(Poisson([a,b],[c,d],500))
+    
+    poissons = generate_poissons()
     nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
+
+def generate_poissons():
+    return [Poisson([rng.random()*500, rng.random()*500-250],
+                    [rng.random()*100-250, rng.random()*100-50],
+                    500)
+            for _ in range(25)]
+    
+def copier_poissons(liste_poissons):
+    return [Poisson(poisson.position_initiale,poisson.vitesse_initiale,poisson.v_max) for poisson in liste_poissons]
+
+def meshgrid():
+    distance_seuil = 100; alpha_separation = 10000; a_rng = 60
+    r_cohesion = 400; r_separation = 60; r_alignement = 5
+    N = 500
+    poissons = generate_poissons()
+    
+    alpha_cohesion = np.arange(0,1001,200)
+    alpha_alignement = np.arange(0,51,10)
+    
+    X, Y = np.meshgrid(alpha_cohesion, alpha_alignement)
+    
+    Z = np.zeros((6,6),dtype=float)
+    for i in range(6):
+        for j in range(6):
+            liste = copier_poissons(poissons)
+            sim = Simulation(liste, [], N, 0.01, distance_seuil, alpha_cohesion[i], alpha_separation, alpha_alignement[j], a_rng, r_cohesion, r_separation, r_alignement)
+            sim.calcul_tableaux()
+            print('/',end='')
+            Z[i,j] = sim.moyennage_parametre_ordre(400,100)
+        print('   ',end='')
+    # Affichage avec imshow
+    plt.imshow(Z, extent=(alpha_cohesion.min(), alpha_cohesion.max(), alpha_alignement.min(), alpha_alignement.max()), origin='lower', cmap='viridis', aspect='auto')
+    plt.colorbar(label="paramètre d'ordre")
+    plt.xlabel('alpha_cohesion')
+    plt.ylabel('alpha_alignement')
+    plt.title("Carte de paramètre d'ordre")
+    plt.show()
 
 def recherche_alignement():
     distance_seuil = 100; alpha_cohesion = 3; alpha_separation = 10000; a_rng = 60
