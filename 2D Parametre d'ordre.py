@@ -116,9 +116,9 @@ class Simulation :
             temps_simu = i*self.dt
             liste_parametre_ordre = []
             if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
-                vitesse_totale = np.zeros(2)
+                vitesse_totale = [0.,0.]
                 for element in self.liste_de_poissons : 
-                    vitesse_totale += element.vitesses[i]
+                    vitesse_totale += np.array(element.vitesses[i])
                 liste_parametre_ordre.append(np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc)))
         liste_parametre_ordre = np.array(liste_parametre_ordre)
         self.parametre_ordre=np.mean(liste_parametre_ordre)
@@ -294,9 +294,9 @@ def test_2():
     
 def test_3():
     distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 10000; alpha_alignement =5; a_rng = 1000
-    N = 500
+    N = 5000
     poissons = []
-    for i in range(3):
+    for i in range(20):
         a = rng.random()*500
         b = rng.random()*500-250
         c = rng.random()*100-250
