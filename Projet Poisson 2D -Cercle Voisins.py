@@ -429,7 +429,7 @@ def test_2():
 def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5
-    N = 2000
+    N = 500
     poissons = []
     for i in range(25):
         a = rng.random()*500
