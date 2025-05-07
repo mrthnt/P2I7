@@ -65,7 +65,7 @@ class Simulation :
         vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
         return vitesse_moy
     
-    def calcul_parametre_ordre(self, temps_simu,  indice):
+    def calcul_parametre_ordre(self, indice):
         """
         Calcul la valeur du paramètre d'ordre
         Args:
@@ -76,6 +76,7 @@ class Simulation :
             parametre_ordre_simulation : le parametre d'ordre de la simulation à un temps donné
 
         """
+        temps_simu = indice*self.dt
         if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
                 vitesse_totale = np.array([0.,0.])
                 vitesse_moyenne = 0
@@ -136,9 +137,8 @@ class Simulation :
                 ## Calcul du vecteur position au rang n+1
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
             
-            temps_simu = i*self.dt
-            somme_parametre_ordre += self.calcul_parametre_ordre(temps_simu,i)
-            
+            #moyenne parametre ordre sur 51 itérations
+            somme_parametre_ordre += self.calcul_parametre_ordre(i)
         self.parametre_ordre = somme_parametre_ordre/51
     
     
