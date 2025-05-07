@@ -65,7 +65,8 @@ class Simulation :
         vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
         return vitesse_moy
 
-    def calcul_tableaux(self):       
+    def calcul_tableaux(self):      
+        taille_banc = len(self.liste_de_poissons)
         for i in range(0, self.N):
 
             ## récupération centre masse banc et vitesse banc
@@ -115,9 +116,7 @@ class Simulation :
             temps_simu = i*self.dt
             liste_parametre_ordre = []
             while temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
-                calcul = True
                 vitesse_totale = [0,0]
-                taille_banc = len(self.liste_de_poissons)
                 for element in self.liste_de_poissons : 
                     vitesse_totale += element.vitesses[i]
                 liste_parametre_ordre.append(np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc)))
@@ -294,36 +293,17 @@ def test_2():
     
 def test_3():
     distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 10000; alpha_alignement =5; a_rng = 1000
-    N = 5000
+    N = 500
     poissons = []
-    for i in range(20):
+    for i in range(3):
         a = rng.random()*500
         b = rng.random()*500-250
         c = rng.random()*100-250
         d = rng.random()*100-50
         poissons.append(Poisson([a,b],[c,d],500))
-    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, temps_calcul_ordre=4.0)
+    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, temps_calcul_ordre=2.0)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre est de {nouvelle_simu.parametre_ordre}")
     
 test_3()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
