@@ -139,7 +139,6 @@ class Simulation :
             temps_simu = i*self.dt
             somme_parametre_ordre += self.calcul_parametre_ordre(temps_simu,i)
             
-        print(somme_parametre_ordre)
         self.parametre_ordre = somme_parametre_ordre/51
     
     
