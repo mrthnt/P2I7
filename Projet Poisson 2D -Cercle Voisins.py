@@ -6,7 +6,7 @@ import random as rng
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement,temps_calcul_ordre=3.0):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
         self.N = N
@@ -20,6 +20,7 @@ class Simulation :
         self.rayon_cohesion = rayon_cohesion
         self.rayon_separation = rayon_separation
         self.rayon_alignement = rayon_alignement
+        self.temps_calcul_ordre = temps_calcul_ordre
         
     def initialiser_matrices_poissons(self):
         """
@@ -160,11 +161,31 @@ class Simulation :
         else:
             res = self.alpha_alignement * ( vitesse_voisins - poisson.vitesses[i, :])
             return res
-        
+    
+    def calcul_parametre_ordre(self, indice):
+        """
+        Calcul la valeur du paramètre d'ordre
+        Args:
+            indice : l'indice temporel de la simulation
+        Returns:
+            parametre_ordre_simulation : le parametre d'ordre de la simulation à un temps donné
+
+        """
+        temps_simu = indice*self.dt
+        if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
+                vitesse_totale = np.array([0.,0.])
+                vitesse_moyenne = 0
+                for element in self.liste_de_poissons : 
+                    vitesse_totale += np.array(element.vitesses[indice])
+                    vitesse_moyenne += np.linalg.norm(element.vitesses[indice])
+                parametre_ordre_simulation = np.linalg.norm(vitesse_totale)/vitesse_moyenne
+        else : 
+            parametre_ordre_simulation = 0
+        return parametre_ordre_simulation
 
 
-    def calcul_tableaux(self):       
-
+    def calcul_tableaux(self):
+        somme_parametre_ordre = 0.
         for i in range(0, self.N):
  
             for p in range(0, len(self.liste_de_poissons)):
@@ -202,6 +223,8 @@ class Simulation :
 
                 ## Calcul du vecteur position au rang n+1
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :] 
+            somme_parametre_ordre += self.calcul_parametre_ordre(i)
+        self.parametre_ordre = somme_parametre_ordre/51
 
 
 class GUI:
@@ -415,8 +438,9 @@ def test_3():
         c = rng.random()*100-250
         d = rng.random()*100-50
         poissons.append(Poisson([a,b],[c,d],500))
-    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement)
+    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, temps_calcul_ordre=4.0)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
+    print(f"le parametre d'ordre est de {nouvelle_simu.parametre_ordre}")
 
 test_3()
