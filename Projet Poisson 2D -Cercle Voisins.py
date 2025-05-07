@@ -444,4 +444,21 @@ def test_3():
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
+def recherche_alignement():
+    distance_seuil = 100; alpha_cohesion = 3; alpha_separation = 10000; a_rng = 60
+    r_cohesion = 500; r_separation = 60; r_alignement = 5
+    N = 3000
+    poissons = []
+    for i in range(20):
+        a = rng.random()*500
+        b = rng.random()*500-250
+        c = rng.random()*100-250
+        d = rng.random()*100-50
+        poissons.append(Poisson([a,b],[c,d],500))
+    for alpha_alignement in range(0, 10, 1):
+        nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, temps_calcul_ordre=20.0)
+        nouvelle_simu.calcul_tableaux()
+
+        print(f"le parametre d'ordre est de {nouvelle_simu.parametre_ordre}")
+
 test_3()
