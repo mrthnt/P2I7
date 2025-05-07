@@ -64,6 +64,28 @@ class Simulation :
             vitesse_moy += poisson.vitesses[i]
         vitesse_moy = vitesse_moy / len(self.liste_de_poissons)
         return vitesse_moy
+    
+    def calcul_parametre_ordre(self, temps_simu,  indice):
+        """
+        Calcul la valeur du paramètre d'ordre
+        Args:
+            indice : l'indice temporel de la simulation
+            temps_simu: le temps de la simulation
+
+        Returns:
+            parametre_ordre_simulation : le parametre d'ordre de la simulation à un temps donné
+
+        """
+        if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
+                vitesse_totale = np.array([0.,0.])
+                vitesse_moyenne = 0
+                for element in self.liste_de_poissons : 
+                    vitesse_totale += np.array(element.vitesses[indice])
+                    vitesse_moyenne += np.linalg.norm(element.vitesses[indice])
+                parametre_ordre_simulation = np.linalg.norm(vitesse_totale)/vitesse_moyenne
+        else : 
+            parametre_ordre_simulation = 0
+        return parametre_ordre_simulation
 
     def calcul_tableaux(self):
         taille_banc = len(self.liste_de_poissons)   
@@ -115,17 +137,13 @@ class Simulation :
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
             
             temps_simu = i*self.dt
+            somme_parametre_ordre += self.calcul_parametre_ordre(temps_simu,i)
             
-            if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
-                vitesse_totale = np.array([0.,0.])
-                for element in self.liste_de_poissons : 
-                    vitesse_totale += np.array(element.vitesses[i])
-                somme_parametre_ordre += np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc))
-                print(somme_parametre_ordre)
+        print(somme_parametre_ordre)
         self.parametre_ordre = somme_parametre_ordre/51
     
     
-
+    
 
 
 
@@ -294,7 +312,7 @@ def test_2():
     fenetre = GUI(nouvelle_simu, vitesse_lecture = 1.0, coord_lim=500)
     
 def test_3():
-    distance_seuil = 100; alpha_cohesion = 5; alpha_separation = 10000; alpha_alignement =5; a_rng = 1000
+    distance_seuil = 100; alpha_cohesion = 0; alpha_separation = 100000; alpha_alignement =0; a_rng = 1000
     N = 5000
     poissons = []
     for i in range(20):
@@ -303,7 +321,7 @@ def test_3():
         c = rng.random()*100-250
         d = rng.random()*100-50
         poissons.append(Poisson([a,b],[c,d],500))
-    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, temps_calcul_ordre=2.0)
+    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, temps_calcul_ordre=4.0)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre est de {nouvelle_simu.parametre_ordre}")
