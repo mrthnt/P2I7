@@ -6,7 +6,7 @@ import random as rng
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement,temps_calcul_ordre=3.0):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
         self.N = N
@@ -20,7 +20,6 @@ class Simulation :
         self.rayon_cohesion = rayon_cohesion
         self.rayon_separation = rayon_separation
         self.rayon_alignement = rayon_alignement
-        self.temps_calcul_ordre = temps_calcul_ordre
         
     def initialiser_matrices_poissons(self):
         """
@@ -179,7 +178,12 @@ class Simulation :
             vitesse_moyenne += np.linalg.norm(element.vitesses[indice])
             parametre_ordre_simulation = np.linalg.norm(vitesse_totale)/vitesse_moyenne
         return parametre_ordre_simulation
-
+    
+    def moyennage_parametre_ordre(self, indice, niter):
+        sum = 0
+        for i in range(indice, indice+niter):
+            sum += self.calcul_parametre_ordre(i)
+        return sum/niter
 
     def calcul_tableaux(self):
         somme_parametre_ordre = 0.
@@ -220,10 +224,6 @@ class Simulation :
 
                 ## Calcul du vecteur position au rang n+1
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :] 
-            temps_simu = i*self.dt
-            if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
-                somme_parametre_ordre += self.calcul_parametre_ordre(i)
-        self.parametre_ordre = somme_parametre_ordre/51
 
 
 class GUI:
@@ -440,6 +440,6 @@ def test_3():
     nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, temps_calcul_ordre=4.0)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
-    print(f"le parametre d'ordre est de {nouvelle_simu.parametre_ordre}")
+    print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
 test_3()
