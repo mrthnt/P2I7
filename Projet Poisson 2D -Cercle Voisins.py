@@ -103,27 +103,29 @@ class Simulation :
 
         for i_poisson in range (0, len(self.liste_de_poissons)):
 
-
-            voisin = self.liste_de_poissons[i_poisson]
-            distance_poisson_voisin_i = poisson.distance(voisin, i)
+            if i_poisson != p :
+                voisin = self.liste_de_poissons[i_poisson]
+                distance_poisson_voisin_i = poisson.distance(voisin, i)
 
             
-            if (distance_poisson_voisin_i < self.rayon_alignement or distance_poisson_voisin_i < self.rayon_cohesion or distance_poisson_voisin_i < self.rayon_separation) and i_poisson != p:
-                vecteur_vitesse = poisson.vitesses[i, :]
-                vecteur_poisson_voisin = voisin.positions[i, :] - poisson.positions[i, :]
-                norme_vitesse = np.linalg.norm(vecteur_vitesse)
+                if distance_poisson_voisin_i < max(self.rayon_alignement, self.rayon_cohesion, self.rayon_separation):
+                    vecteur_vitesse = poisson.vitesses[i, :]
+                    vecteur_poisson_voisin = voisin.positions[i, :] - poisson.positions[i, :]
+                    norme_vitesse = np.linalg.norm(vecteur_vitesse)
             
-                cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
+                    cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
+                    
+                    if cos_angle > cos_angle_vision :
 
-            if distance_poisson_voisin_i < self.rayon_alignement and i_poisson != p and cos_angle > cos_angle_vision:
+                        if distance_poisson_voisin_i < self.rayon_alignement:
 
-                poisson.poissons_dans_rayon_alignement.append(voisin)
-            if distance_poisson_voisin_i < self.rayon_cohesion and i_poisson != p and cos_angle > cos_angle_vision:
+                            poisson.poissons_dans_rayon_alignement.append(voisin)
+                        if distance_poisson_voisin_i < self.rayon_cohesion:
 
-                poisson.poissons_dans_rayon_cohesion.append(voisin)
-            if distance_poisson_voisin_i < self.rayon_separation and i_poisson != p and cos_angle > cos_angle_vision:
+                            poisson.poissons_dans_rayon_cohesion.append(voisin)
+                        if distance_poisson_voisin_i < self.rayon_separation:
 
-                poisson.poissons_dans_rayon_separation.append(voisin)
+                            poisson.poissons_dans_rayon_separation.append(voisin)
 
     def composante_acceleration_separation(self, poisson, i):
         res = np.zeros((2))
