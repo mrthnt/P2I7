@@ -171,16 +171,13 @@ class Simulation :
             parametre_ordre_simulation : le parametre d'ordre de la simulation à un temps donné
 
         """
-        temps_simu = indice*self.dt
-        if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
-                vitesse_totale = np.array([0.,0.])
-                vitesse_moyenne = 0
-                for element in self.liste_de_poissons : 
-                    vitesse_totale += np.array(element.vitesses[indice])
-                    vitesse_moyenne += np.linalg.norm(element.vitesses[indice])
-                parametre_ordre_simulation = np.linalg.norm(vitesse_totale)/vitesse_moyenne
-        else : 
-            parametre_ordre_simulation = 0
+        
+        vitesse_totale = np.array([0.,0.])
+        vitesse_moyenne = 0
+        for element in self.liste_de_poissons : 
+            vitesse_totale += np.array(element.vitesses[indice])
+            vitesse_moyenne += np.linalg.norm(element.vitesses[indice])
+            parametre_ordre_simulation = np.linalg.norm(vitesse_totale)/vitesse_moyenne
         return parametre_ordre_simulation
 
 
@@ -223,7 +220,9 @@ class Simulation :
 
                 ## Calcul du vecteur position au rang n+1
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :] 
-            somme_parametre_ordre += self.calcul_parametre_ordre(i)
+            temps_simu = i*self.dt
+            if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
+                somme_parametre_ordre += self.calcul_parametre_ordre(i)
         self.parametre_ordre = somme_parametre_ordre/51
 
 
