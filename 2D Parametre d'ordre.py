@@ -115,7 +115,7 @@ class Simulation :
             
             temps_simu = i*self.dt
             liste_parametre_ordre = []
-            while temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
+            if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
                 vitesse_totale = [0,0]
                 for element in self.liste_de_poissons : 
                     vitesse_totale += element.vitesses[i]
