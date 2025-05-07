@@ -116,11 +116,12 @@ class Simulation :
             temps_simu = i*self.dt
             liste_parametre_ordre = []
             if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
-                vitesse_totale = [0,0]
+                vitesse_totale = np.zeros(2)
                 for element in self.liste_de_poissons : 
                     vitesse_totale += element.vitesses[i]
                 liste_parametre_ordre.append(np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc)))
-        self.parametre_ordre=self.mean(liste_parametre_ordre)/len(liste_parametre_ordre)
+        liste_parametre_ordre = np.array(liste_parametre_ordre)
+        self.parametre_ordre=np.mean(liste_parametre_ordre)
     
     
 
