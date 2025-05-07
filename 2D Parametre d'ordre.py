@@ -66,7 +66,8 @@ class Simulation :
         return vitesse_moy
 
     def calcul_tableaux(self):
-        taille_banc = len(self.liste_de_poissons)       
+        taille_banc = len(self.liste_de_poissons)   
+        somme_parametre_ordre = 0.
         for i in range(0, self.N):
 
             ## récupération centre masse banc et vitesse banc
@@ -114,14 +115,14 @@ class Simulation :
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
             
             temps_simu = i*self.dt
-            liste_parametre_ordre = np.zeros(51)
+            
             if temps_simu >= self.temps_calcul_ordre and temps_simu <= (self.temps_calcul_ordre + 50*self.dt) :
                 vitesse_totale = np.array([0.,0.])
                 for element in self.liste_de_poissons : 
                     vitesse_totale += np.array(element.vitesses[i])
-                liste_parametre_ordre[int(i-self.temps_calcul_ordre/self.dt)] = (np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc)))
-                print(liste_parametre_ordre)
-        self.parametre_ordre = np.mean(liste_parametre_ordre)
+                somme_parametre_ordre += np.linalg.norm(vitesse_totale)/(taille_banc * np.linalg.norm(vitesse_banc))
+                print(somme_parametre_ordre)
+        self.parametre_ordre = somme_parametre_ordre/51
     
     
 
