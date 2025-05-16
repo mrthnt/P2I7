@@ -6,9 +6,10 @@ import random as rng
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, liste_obstacles, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
+        self.liste_obstacles = liste_obstacles
         self.N = N
         self.dt = dt
         self.initialiser_matrices_poissons()
@@ -160,6 +161,16 @@ class Simulation :
         else:
             res = self.alpha_alignement * ( vitesse_voisins - poisson.vitesses[i, :])
             return res
+        
+    def composante_acceleration_obstacles(self, poisson, i):
+        res = np.zeros((2))
+        for obstacle in self.liste_obstacles:
+            vecteur_distance_obstacle = poisson.vecteur_distance_obstacle
+            distance_obstacle = np.linalg.norm(vecteur_distance_obstacle)
+            if distance_obstacle <= obstacle.distance_repulsion:
+                res += obstacle.coefficient_repulsion*vecteur_distance_obstacle/(np.linalg.norm(vecteur_distance_obstacle))**2
+        return res 
+    
     
     def calcul_parametre_ordre(self, indice):
         """
@@ -200,6 +211,8 @@ class Simulation :
 
                 a_alignement = self.composante_acceleration_alignement(poisson, i)
                 
+                a_obstacle = self.composante_acceleration_obstacles(poisson, i)
+                
                 n1_rand = (rng.random() - 0.4) * self.a_rng   ## le vecteur vitesse aleatoire comprend des valeurs allant de -0,4 x a_rng à 0,6 x a_rng
                 n2_rand = (rng.random()*2 - 1) * 3            ## angle de rotation aléatoire de la vitesse aléatoire par rapoort à celle d'avant
 
@@ -208,7 +221,7 @@ class Simulation :
                 [np.sin(n2_rand),  np.cos(n2_rand)]
                 ])
 
-                poisson.accelerations[i+1, :] = a_cohesion + a_separation + a_alignement 
+                poisson.accelerations[i+1, :] = a_cohesion + a_separation + a_alignement + a_obstacle
 
 
                 
