@@ -236,6 +236,8 @@ class GUI:
         self.ax.set_ylim(-coord_lim, coord_lim)
         self.ax.set_aspect('equal')
 
+        self.obstacles = []
+        self.init_obstacles()
         self.triangles = []
         self.init_triangles()
 
@@ -245,12 +247,20 @@ class GUI:
         else:
             self.ani = FuncAnimation(self.fig, self.update_non_suivi, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=True) 
         plt.show()
-    
+
+    def init_obstacles(self):
+        """
+        crée les lignes représentant les obstacles
+        """
+        for obstacle in self.simulation.liste_obstacles:
+            ligne = Polygon(obstacle.liste_limites, closed = True, color='crimson')
+            self.ax.add_patch(ligne)
+            self.obstacles.append(ligne)
+            
     def init_triangles(self):
         """
         Cree les triangles des boids
-        
-    """
+        """
         for poisson in self.simulation.liste_de_poissons:
             pos, vit = poisson.position_initiale, poisson.vitesse_initiale
             coords = self.coords_triangle(pos, vit)
