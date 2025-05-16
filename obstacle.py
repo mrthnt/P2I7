@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
+from matplotlib.lines import Line2D
 from matplotlib.animation import FuncAnimation
 import random as rng
 
@@ -266,8 +267,9 @@ class GUI:
         crée les lignes représentant les obstacles
         """
         for obstacle in self.simulation.liste_obstacles:
-            ligne = Polygon(obstacle.liste_limites, closed = True, color='crimson')
-            self.ax.add_patch(ligne)
+            x1, y1, x2, y2 = obstacle.liste_limites
+            ligne = Line2D([x1,x2],[y1,y2], color='crimson')
+            self.ax.add_line(ligne)
             self.obstacles.append(ligne)
             
     def init_triangles(self):
@@ -398,9 +400,9 @@ class Boid :
         return norme
     
     def vecteur_distance(self, obstacle, i): 	#distance avec un boid à l'indice i
-        vecteur_arrete = [obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]]/np.linalg([obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]])
-        vecteur_normal = [-vecteur_arrete[1],vecteur_arrete[0]]
-        difference_position = self.position-obstacle.liste_limites
+        vecteur_arrete = [obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]]/np.linalg.norm([obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]])
+        vecteur_normal = np.array([-vecteur_arrete[1],vecteur_arrete[0]])
+        difference_position = self.positions[i]-[obstacle.liste_limites[0],obstacle.liste_limites[1]]
         distance_obsta = np.dot(difference_position, vecteur_normal)
         return distance_obsta*vecteur_normal
             
@@ -416,9 +418,9 @@ class Poisson(Boid):
 
 class Obstacle():
     def __init__(self, liste_limites):        #####liste_limites de la forme [x1,y1,x2,y2]
-        self.liste_limites=np.array([liste_limites])
-        self.distance_repulsion = 5
-        self.coefficient_repulsion = 10000
+        self.liste_limites=np.array(liste_limites)
+        self.distance_repulsion = 200
+        self.coefficient_repulsion = 100000
     
     
 
@@ -469,7 +471,7 @@ def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5
     N = 500
-    obstacle = (-10,10,100,10)
+    obstacle = Obstacle([200,-20,1000,-30])
     liste_obstacle = [obstacle]
     poissons = []
     for i in range(25):
