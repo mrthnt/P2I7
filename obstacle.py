@@ -374,22 +374,12 @@ class Boid :
         norme = np.linalg.norm(diff_position)
         return norme
     
-    def distance_obstacle(self, obstacle, i): 	#distance avec un boid à l'indice i
-        vecteur_coin_1 = [self.position[i][0]-obstacle.liste_limites[0],self.position[i][1]-obstacle.liste_limites[1]]
-        vecteur_coin_2 = [self.position[i][0]-obstacle.liste_limites[2],self.position[i][1]-obstacle.liste_limites[3]]
-        vecteur_arrete1 = [0,obstacle.liste_limites[3]-obstacle.liste_limites[1]]/np.linalg([0,obstacle.liste_limites[3]-obstacle.liste_limites[1]])
-        vecteur_arrete2 = [obstacle.liste_limites[2]-obstacle.liste_limites[1],0]/np.linalg([obstacle.liste_limites[2]-obstacle.liste_limites[1],0])
-        if np.linalg.norm(vecteur_coin_1)>np.linalg.norm(vecteur_coin_2):
-            vecteur_position_min = vecteur_coin_2
-        else : 
-            vecteur_position_min=vecteur_coin_1
-        vecteur_coin_unitaire = vecteur_position_min/np.linalg.norm(vecteur_position_min)
-        angle1 = np.arcos(np.clip(np.dot(vecteur_coin_unitaire,vecteur_arrete1)))
-        angle2 = np.arcos(np.clip(np.dot(vecteur_coin_unitaire,vecteur_arrete2)))
-        distance1 = np.linalg.norm(vecteur_position_min)*np.sin(angle1)
-        distance2 = np.linalg.norm(vecteur_position_min)*np.cos(angle1)  
-        distance3 = np.linalg.norm(vecteur_position_min)*np.sin(angle2)
-        distance4 = np.linalg.norm(vecteur_position_min)*np.cos(angle2)  
+    def vecteur_distance(self, obstacle, i): 	#distance avec un boid à l'indice i
+        vecteur_arrete = [obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]]/np.linalg([obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]])
+        vecteur_normal = [-vecteur_arrete[1],vecteur_arrete[0]]
+        difference_position = self.position-obstacle.liste_limites
+        distance_obsta = np.dot(difference_position, vecteur_normal)
+        return distance_obsta*vecteur_normal
             
 
 
@@ -403,7 +393,7 @@ class Poisson(Boid):
 
 class Obstacle():
     def __init__(self, liste_limites):        #####liste_limites de la forme [x1,y1,x2,y2]
-        self.liste_limites=liste_limites
+        self.liste_limites=np.array([liste_limites])
         self.distance_repulsion = 5
         self.coefficient_repulsion = 10000
     
