@@ -166,9 +166,10 @@ class Simulation :
     def composante_acceleration_obstacles(self, poisson, i):
         res = np.zeros((2))
         for obstacle in self.liste_obstacles:
-            distance_obstacle,vecteur_distance_obstacle = poisson.infos_distance(obstacle, i)
-            if distance_obstacle <= obstacle.distance_repulsion:
-                res += obstacle.coefficient_repulsion*vecteur_distance_obstacle/(np.linalg.norm(vecteur_distance_obstacle))**2
+            vecteur_normal, projete_tan = poisson.infos_distance(obstacle, i)
+            projete_normal = np.linalg.norm(vecteur_normal)
+            if projete_normal <= obstacle.distance_repulsion and projete_tan<obstacle.longueur/2:
+                res += obstacle.coefficient_repulsion*vecteur_normal/(np.linalg.norm(vecteur_normal))**2
         return res 
     
     
@@ -420,6 +421,7 @@ class Obstacle():
         self.liste_limites=np.array(liste_limites)
         self.distance_repulsion = 200
         self.coefficient_repulsion = 100000
+        self.longueur = np.linalg.norm([liste_limites[2]-liste_limites[0],liste_limites[3]-liste_limites[1]])
     
     
 
@@ -470,7 +472,7 @@ def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5
     N = 500
-    obstacle = Obstacle([200,-20,1000,-30])
+    obstacle = Obstacle([400,-20,1000,-30])
     liste_obstacle = [obstacle]
     poissons = []
     for i in range(25):
