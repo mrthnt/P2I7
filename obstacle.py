@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
@@ -154,7 +155,6 @@ class Simulation :
         
     def composante_acceleration_alignement(self, poisson, i):
         res = np.zeros((2))
-        liste_voisins = poisson.poissons_dans_rayon_alignement
         valeur, vitesse_voisins = self.vitesse_voisins(poisson, i)   ## vecteur vitesse des voisins
 
         if valeur == None:
@@ -166,8 +166,7 @@ class Simulation :
     def composante_acceleration_obstacles(self, poisson, i):
         res = np.zeros((2))
         for obstacle in self.liste_obstacles:
-            vecteur_distance_obstacle = poisson.vecteur_distance(obstacle, i)
-            distance_obstacle = np.linalg.norm(vecteur_distance_obstacle)
+            distance_obstacle,vecteur_distance_obstacle = poisson.infos_distance(obstacle, i)
             if distance_obstacle <= obstacle.distance_repulsion:
                 res += obstacle.coefficient_repulsion*vecteur_distance_obstacle/(np.linalg.norm(vecteur_distance_obstacle))**2
         return res 
@@ -198,7 +197,6 @@ class Simulation :
         return sum/niter
 
     def calcul_tableaux(self):
-        somme_parametre_ordre = 0.
         for i in range(0, self.N):
  
             for p in range(0, len(self.liste_de_poissons)):
@@ -399,12 +397,13 @@ class Boid :
         norme = np.linalg.norm(diff_position)
         return norme
     
-    def vecteur_distance(self, obstacle, i): 	#distance avec un boid à l'indice i
-        vecteur_arrete = [obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]]/np.linalg.norm([obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]])
+    def infos_distance(self, obstacle, i): 	#distance avec un boid à l'indice i
+        vecteur_arrete = np.array([obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]]/np.linalg.norm([obstacle.liste_limites[2]-obstacle.liste_limites[0],obstacle.liste_limites[3]-obstacle.liste_limites[1]]))
         vecteur_normal = np.array([-vecteur_arrete[1],vecteur_arrete[0]])
-        difference_position = self.positions[i]-[obstacle.liste_limites[0],obstacle.liste_limites[1]]
-        distance_obsta = np.dot(difference_position, vecteur_normal)
-        return distance_obsta*vecteur_normal
+        difference_position = self.positions[i]-[(obstacle.liste_limites[2]+obstacle.liste_limites[0])/2,(obstacle.liste_limites[3]+obstacle.liste_limites[1])/2]
+        projete_normal = np.dot(difference_position, vecteur_normal)
+        projete_tang = np.dot(difference_position, vecteur_arrete)
+        return projete_normal*vecteur_normal, projete_tang
             
 
 
