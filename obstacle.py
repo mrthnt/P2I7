@@ -472,8 +472,11 @@ def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5
     N = 500
-    obstacle = Obstacle([180,-20,1000,10])
-    liste_obstacle = [obstacle]
+    obstacle0 = Obstacle([180,-20,1000,10])
+    obstacle1 = Obstacle([100,-2000,200,1000])
+    obstacle2 = Obstacle([0,50,500,-200])
+    obstacle3 = Obstacle([180,-500,10,100])
+    liste_obstacle = [obstacle0,obstacle1,obstacle2,obstacle3]
     poissons = []
     for i in range(25):
         a = rng.random()*500
