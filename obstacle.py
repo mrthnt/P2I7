@@ -165,7 +165,7 @@ class Simulation :
     def composante_acceleration_obstacles(self, poisson, i):
         res = np.zeros((2))
         for obstacle in self.liste_obstacles:
-            vecteur_distance_obstacle = poisson.vecteur_distance_obstacle
+            vecteur_distance_obstacle = poisson.vecteur_distance(obstacle, i)
             distance_obstacle = np.linalg.norm(vecteur_distance_obstacle)
             if distance_obstacle <= obstacle.distance_repulsion:
                 res += obstacle.coefficient_repulsion*vecteur_distance_obstacle/(np.linalg.norm(vecteur_distance_obstacle))**2
@@ -469,6 +469,8 @@ def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5
     N = 500
+    obstacle = (-10,10,100,10)
+    liste_obstacle = [obstacle]
     poissons = []
     for i in range(25):
         a = rng.random()*500
@@ -476,7 +478,7 @@ def test_3():
         c = rng.random()*100-250
         d = rng.random()*100-50
         poissons.append(Poisson([a,b],[c,d],500))
-    nouvelle_simu = Simulation(poissons, [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement)
+    nouvelle_simu = Simulation(poissons, [],liste_obstacle, N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
