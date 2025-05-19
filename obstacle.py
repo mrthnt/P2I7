@@ -542,4 +542,19 @@ def test_3():
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
+def test_graphe():
+    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    r_cohesion = 400; r_separation = 60; r_alignement = 5
+    N = 500
+    poissons = []
+    for i in range(5):
+        a = rng.random()*500
+        b = rng.random()*500-250
+        c = rng.random()*100-250
+        d = rng.random()*100-50
+        poissons.append(Poisson([a,b],[c,d],500))
+    sim = Simulation(poissons, [],[Obstacle([250,-200,300,200])], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement)
+    sim.calcul_tableaux()
+    graphe_pos(sim)
+
 test_3()
