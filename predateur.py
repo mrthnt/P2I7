@@ -6,7 +6,7 @@ import random as rng
 
 class Simulation :
     
-    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement, rayon_predation):
+    def __init__(self, liste_de_poissons, liste_de_predateurs, N, dt, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, rayon_cohesion, rayon_separation, rayon_alignement, rayon_predation, rayon_proies):
         self.liste_de_poissons = liste_de_poissons
         self.liste_de_predateurs = liste_de_predateurs
         self.N = N
@@ -21,6 +21,7 @@ class Simulation :
         self.rayon_separation = rayon_separation
         self.rayon_alignement = rayon_alignement
         self.rayon_predation = rayon_predation
+        self.rayon_proies = rayon_proies
         
     def initialiser_matrices_boids(self):
         """
@@ -96,7 +97,7 @@ class Simulation :
             
             return None, vitesse_moy
 
-    def mise_a_jour_liste_voisin(self, poisson, i, p, angle_de_vision = 150):
+    def mise_a_jour_liste_poissons(self, poisson, i, p, angle_de_vision = 150):
 
         poisson.poissons_dans_rayon_cohesion   = []
         poisson.poissons_dans_rayon_alignement = []
@@ -133,13 +134,66 @@ class Simulation :
             
         for predateur in self.liste_de_predateurs:
             distance_predateur = poisson.distance(predateur, i)
-            if distance_predateur < poisson.rayon_predation : 
+            
+            if distance_predateur < self.rayon_predation : 
                 vecteur_vitesse = poisson.vitesses[i, :]
                 vecteur_predateur = predateur.positions[i, :] - poisson.positions[i, :]
                 norme_vitesse = np.linalg.norm(vecteur_vitesse)
                 cos_angle = np.dot(vecteur_predateur, vecteur_vitesse) / (norme_vitesse *distance_predateur)
+                
                 if cos_angle > cos_angle_vision :
                     poisson.predateur_dans_vision.append(predateur)
+      
+    def mise_a_jour_liste_predateurs(self, predateur, i, p, angle_de_vision = 140):
+        predateur.poisson_le_plus_proche = None
+        predateur.predateur_dans_rayon_separation = []
+                
+        cos_angle_vision = np.cos(np.deg2rad(angle_de_vision))
+        
+        chasse = False
+        liste_proies_en_visu = []
+        liste_distance_proies = []
+        
+        for i_predateur in range(0, len(self.liste_de_predateurs)):
+            if i_predateur != p :
+                voisin = self.liste_de_predateurs[i_predateur]
+                distance_voisin = predateur.distance(voisin, i)
+                
+                if distance_predateur < (1.5*self.rayon_separation) : 
+                    vecteur_vitesse = predateur.vitesses[i, :]
+                    vecteur_voisin = voisin.positions[i, :] - predateur.positions[i, :]
+                    norme_vitesse = np.linalg.norm(vecteur_vitesse)
+                    cos_angle = np.dot(vecteur_voisin, vecteur_vitesse) / (norme_vitesse *distance_voisin)
+                    
+                    if cos_angle < cos_angle_vision : 
+                        predateur.predateur_dans_rayon_separation.append(voisin)
+        
+        for proie in self.liste_de_poissons : 
+            distance_proie = predateur.distance(proie, i)
+            
+            if distance_proie < self.rayon_proies :
+                vecteur_vitesse = predateur.vitesses[i, :]
+                vecteur_proie = proie.positions[i, :] - predateur.positions[i, :]
+                norme_vitesse = np.linalg.norm(vecteur_vitesse)
+                cos_angle = np.dot(vecteur_proie, vecteur_vitesse) / (norme_vitesse *distance_voisin)
+                
+                if cos_angle < cos_angle_vision :
+                    if chasse != True:
+                        if distance_proie < 25 : 
+                            chasse == True
+                    liste_proies_en_visu = proie
+                    liste_distance_proies = distance_proie
+        indice_min = liste_distance_proies.index(min(liste_distance_proies))
+        predateur.poisson_le_plus_proche = liste_proies_en_visu[indice_min]
+                    
+                    
+                
+                
+                
+                
+                
+                
+                
                 
 
     def composante_acceleration_separation(self, poisson, i):
@@ -222,7 +276,7 @@ class Simulation :
             for p in range(0, len(self.liste_de_poissons)):
                 poisson = self.liste_de_poissons[p]
                 
-                self.mise_a_jour_liste_voisin(poisson, i, p)
+                self.mise_a_jour_liste_poissons(poisson, i, p)
                 
 
                 a_cohesion = self.composante_acceleration_cohesion(poisson, i)
@@ -257,6 +311,37 @@ class Simulation :
 
                 ## Calcul du vecteur position au rang n+1
                 poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :] 
+            
+        for p in range(0, len(self.liste_de_predateurs)):
+            predateur = self.liste_de_predateurs[p]
+            
+            self.mise_a_jour_liste_predateurs(predateur, i, p)
+    
+    
+            n1_rand = (rng.random() - 0.4) * self.a_rng   ## le vecteur vitesse aleatoire comprend des valeurs allant de -0,4 x a_rng à 0,6 x a_rng
+            n2_rand = (rng.random()*2 - 1) * 3            ## angle de rotation aléatoire de la vitesse aléatoire par rapoort à celle d'avant
+
+            matrice_rotation = np.array([
+            [np.cos(n2_rand), -np.sin(n2_rand)],
+            [np.sin(n2_rand),  np.cos(n2_rand)]
+            ])
+
+            poisson.accelerations[i+1, :] =
+
+
+            
+            ## Calcul du vecteur vitesse au rang n+1
+            vecteur_vitesse = poisson.vitesses[i, :] + self.dt * poisson.accelerations[i+1, :] + n1_rand*(matrice_rotation @ (poisson.vitesses[i, :])/np.linalg.norm(poisson.vitesses[i, :]))
+
+            ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
+            norme_vitesse = np.linalg.norm(vecteur_vitesse)
+            if norme_vitesse > poisson.v_max :
+                poisson.vitesses[i+1, :] = (vecteur_vitesse * poisson.v_max) / norme_vitesse
+            else:
+                poisson.vitesses[i+1, :] = vecteur_vitesse
+
+            ## Calcul du vecteur position au rang n+1
+            poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :] 
                 
         
 
@@ -427,8 +512,8 @@ class Predateur(Boid):
     
     def initialisation_matrices(self):
         super().initialisation_matrices()
-        self.poisson_dans_vision = []
-        self.predateur_dans_vision = []
+        self.poisson_le_plus_proche = []
+        self.predateur_dans_rayon_separation = []
     
     
 
