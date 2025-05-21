@@ -351,6 +351,7 @@ class Simulation :
                     ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
                     norme_vitesse = np.linalg.norm(vecteur_vitesse)
                     if norme_vitesse > poisson.v_max :
+                        poisson.vitesses[i+1, :] = poisson.vitesses[i, :]
                         poisson.vitesses[i+1, :] = (vecteur_vitesse * poisson.v_max) / norme_vitesse
                     else:
                         poisson.vitesses[i+1, :] = vecteur_vitesse
@@ -452,6 +453,7 @@ class GUI:
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
             new_coords = self.coords_triangle(pos, vit)
             self.triangles[i].set_xy(new_coords)
+            self.triangles[i].set_fill(self.simulation.liste_de_poissons[i].vivant[frame])
         for j in range(len(self.simulation.liste_de_predateurs)):
             pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
             new_coords = self.coords_triangle(pos, vit)
@@ -477,6 +479,7 @@ class GUI:
             pos,vit = self.simulation.liste_de_poissons[i].positions[frame], self.simulation.liste_de_poissons[i].vitesses[frame]
             new_coords = self.coords_triangle(pos, vit)
             self.triangles[i].set_xy(new_coords)
+            self.triangles[i].set_fill(self.simulation.liste_de_poissons[i].vivant[frame])
         for j in range(len(self.simulation.liste_de_predateurs)):
             pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
             new_coords = self.coords_triangle(pos, vit)
