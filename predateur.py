@@ -145,7 +145,7 @@ class Simulation :
                 if cos_angle > cos_angle_vision :
                     poisson.predateur_dans_vision.append(predateur)
       
-    def mise_a_jour_liste_predateurs(self, predateur, i, p, angle_de_vision = 140):
+    def mise_a_jour_liste_predateurs(self, predateur, i, p, angle_de_vision = 180):
         predateur.poisson_le_plus_proche = None
         predateur.predateur_dans_rayon_separation = []
                 
@@ -241,24 +241,23 @@ class Simulation :
                 position_predateur = predateur.positions[i, :] 
                 position_poisson = poisson.positions[i, :]
                 distance_poisson_predateur = poisson.distance(predateur, i)
-                res = res + 10*self.alpha_separation *(position_poisson - position_predateur)/distance_poisson_predateur**2
+                res = res + 50*self.alpha_separation *(position_poisson - position_predateur)/distance_poisson_predateur**2
         return res/compteur
             
     def composante_acceleration_proie(self, predateur,i):
         res = np.zeros(2)
         boost = 0
-        proie = predateur.poisson_le_plus_proche
+        proie = self.liste_de_poissons[0]
         if proie != None:
             position_predateur = predateur.positions[i, :]
             vitesse_predateur = predateur.vitesses[i, :]
-            vitesse_predateur_normee = vitesse_predateur/np.linalg.norm(vitesse_predateur)
             position_proie = proie.positions[i, :]
             distance_poisson_predateur = predateur.distance(proie, i)
             if distance_poisson_predateur < predateur.distance_chasse:
-                boost = 5
+                boost = 50
             vecteur_direction = position_proie - position_predateur
             vec_dir =vecteur_direction/np.linalg.norm(vecteur_direction)
-            res = self.alpha_alignement * (vec_dir-vitesse_predateur_normee) + boost *vec_dir
+            res = 150*self.alpha_alignement * vec_dir + boost *vec_dir
         return res
     
     def composante_acceleration_separation_predateurs(self, predateur, i):
@@ -272,7 +271,7 @@ class Simulation :
                 position_voisin = voisin.positions[i, :] 
                 position_predateur = predateur.positions[i, :]
                 distance_predateur_voisin = predateur.distance(voisin, i)
-                res = res + 1.5*self.alpha_separation * (position_predateur - position_voisin) / distance_predateur_voisin**2
+                res = res + 15*self.alpha_separation * (position_predateur - position_voisin) / distance_predateur_voisin**2
             return res/compteur
     
     
@@ -412,7 +411,7 @@ class GUI:
             self.triangles.append(triangle)
         for predateur in self.simulation.liste_de_predateurs:
             pos, vit = predateur.position_initiale, predateur.vitesse_initiale
-            coords = self.coords_triangle(pos, vit, 5)
+            coords = self.coords_triangle(pos, vit)
             triangle = Polygon(coords, closed=True, color='red')
             self.ax.add_patch(triangle)
             self.triangles.append(triangle)
@@ -602,8 +601,9 @@ def test_3():
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
     predateur = Predateur([0,0], [0,15], 600)
+    predateur2 = Predateur([6,0], [15,0], 600)
     poissons = generate_poissons()
-    nouvelle_simu = Simulation(poissons, [predateur], N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu = Simulation(poissons, [predateur,predateur2], N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
@@ -645,44 +645,6 @@ def meshgrid():
     plt.title("Carte de paramètre d'ordre")
     plt.show()
 
-def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
-    if lim == [0,0,0,0]:
-        xmax = np.max(simulation.liste_de_poissons[0].positions[:,0])
-        ymax = np.max(simulation.liste_de_poissons[0].positions[:,1])
-        xmin = np.min(simulation.liste_de_poissons[0].positions[:,0])
-        ymin = np.min(simulation.liste_de_poissons[0].positions[:,1])
-        for poisson in simulation.liste_de_poissons:
-            xma = np.max(poisson.positions[:,0])
-            yma = np.max(poisson.positions[:,1])
-            xmi = np.min(poisson.positions[:,0])
-            ymi = np.min(poisson.positions[:,1])
-            if xma>xmax:
-                xmax = xma
-            if yma>ymax:
-                ymax = yma
-            if xmi<xmin:
-                xmin = xmi
-            if ymi<ymin:
-                ymin=ymi
-        lim = [xmin,xmax,ymin,ymax]
-    fig, ax = plt.subplots(1,1,figsize=(15,5))
-    couleurs = ['b', 'g', 'c', 'm', 'y']
-    for i in range(len(simulation.liste_de_poissons)):
-        ax.plot(simulation.liste_de_poissons[i].positions[:,0],simulation.liste_de_poissons[i].positions[:,1],couleurs[i%len(couleurs)]+':')
-    for predateur in simulation.liste_de_predateurs:
-        ax.plot(simulation.liste_de_predateurs[i].positions[:,0],simulation.liste_de_predateurs[i].positions[:,1],'r--')
-    for obstacle in simulation.liste_obstacles:
-        xo1,yo1,xo2,yo2 = obstacle.liste_limites
-        ax.plot([xo1,xo2],[yo1,yo2],'k')
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_xlim([lim[0],lim[1]])
-    ax.set_ylim([lim[2],lim[3]])
-    ax.grid()
-    ax.legend()
-    plt.title("positions des boïds (Y en fonction de X)")    
-    plt.show()
-    
 def recherche_alignement():
     distance_seuil = 100; alpha_cohesion = 3; alpha_separation = 10000; a_rng = 60
     r_cohesion = 500; r_separation = 60; r_alignement = 5
