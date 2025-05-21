@@ -645,6 +645,44 @@ def meshgrid():
     plt.title("Carte de paramètre d'ordre")
     plt.show()
 
+def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
+    if lim == [0,0,0,0]:
+        xmax = np.max(simulation.liste_de_poissons[0].positions[:,0])
+        ymax = np.max(simulation.liste_de_poissons[0].positions[:,1])
+        xmin = np.min(simulation.liste_de_poissons[0].positions[:,0])
+        ymin = np.min(simulation.liste_de_poissons[0].positions[:,1])
+        for poisson in simulation.liste_de_poissons:
+            xma = np.max(poisson.positions[:,0])
+            yma = np.max(poisson.positions[:,1])
+            xmi = np.min(poisson.positions[:,0])
+            ymi = np.min(poisson.positions[:,1])
+            if xma>xmax:
+                xmax = xma
+            if yma>ymax:
+                ymax = yma
+            if xmi<xmin:
+                xmin = xmi
+            if ymi<ymin:
+                ymin=ymi
+        lim = [xmin,xmax,ymin,ymax]
+    fig, ax = plt.subplots(1,1,figsize=(15,5))
+    couleurs = ['b', 'g', 'c', 'm', 'y']
+    for i in range(len(simulation.liste_de_poissons)):
+        ax.plot(simulation.liste_de_poissons[i].positions[:,0],simulation.liste_de_poissons[i].positions[:,1],couleurs[i%len(couleurs)]+':')
+    for predateur in simulation.liste_de_predateurs:
+        ax.plot(simulation.liste_de_predateurs[i].positions[:,0],simulation.liste_de_predateurs[i].positions[:,1],'r--')
+    for obstacle in simulation.liste_obstacles:
+        xo1,yo1,xo2,yo2 = obstacle.liste_limites
+        ax.plot([xo1,xo2],[yo1,yo2],'k')
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_xlim([lim[0],lim[1]])
+    ax.set_ylim([lim[2],lim[3]])
+    ax.grid()
+    ax.legend()
+    plt.title("positions des boïds (Y en fonction de X)")    
+    plt.show()
+    
 def recherche_alignement():
     distance_seuil = 100; alpha_cohesion = 3; alpha_separation = 10000; a_rng = 60
     r_cohesion = 500; r_separation = 60; r_alignement = 5
