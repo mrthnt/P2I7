@@ -370,7 +370,7 @@ class Simulation :
             if len(self.liste_de_poissons) != 0:
                 for poisson in self.liste_de_poissons:
                     if poisson.vivant[i] == True :
-                        if abs(predateur.distance(poisson,i)) < 5:
+                        if abs(predateur.distance(poisson,i)) < 25:
                             print("je mange")
                             poisson.vivant[i] = False
                          
