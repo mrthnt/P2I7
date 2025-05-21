@@ -351,7 +351,6 @@ class Simulation :
                     ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
                     norme_vitesse = np.linalg.norm(vecteur_vitesse)
                     if norme_vitesse > poisson.v_max :
-                        poisson.vitesses[i+1, :] = poisson.vitesses[i, :]
                         poisson.vitesses[i+1, :] = (vecteur_vitesse * poisson.v_max) / norme_vitesse
                     else:
                         poisson.vitesses[i+1, :] = vecteur_vitesse
@@ -361,6 +360,7 @@ class Simulation :
                     self.test_manger(i)
                     poisson.vivant[i+1] = poisson.vivant[i]
                 else :
+                    poisson.vitesses[i+1, :] = poisson.vitesses[i, :]
                     poisson.positions[i+1, :] = poisson.positions[i, :]
                 
             
