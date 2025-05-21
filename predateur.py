@@ -357,6 +357,8 @@ class Simulation :
     
                     ## Calcul du vecteur position au rang n+1
                     poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
+                    self.test_manger(i)
+                    poisson.vivant[i+1] = poisson.vivant[i]
                 else :
                     poisson.positions[i+1, :] = poisson.positions[i, :]
                 
@@ -395,9 +397,6 @@ class Simulation :
 
                 ## Calcul du vecteur position au rang n+1
                 predateur.positions[i+1, :] = predateur.positions[i, :] + self.dt * predateur.vitesses[i+1, :]
-            
-            self.test_manger(i)
-            poisson.vivant[i+1] = poisson.vivant[i]
         print(self.liste_de_poissons[0].vivant)
                 
    
