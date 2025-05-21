@@ -284,7 +284,7 @@ class Simulation :
             if len(self.liste_de_poissons) != 0:
                 for poisson in self.liste_de_poissons:
                     if poisson.vivant[i] == True :
-                        if abs(predateur.distance(poisson,i)) < 15:
+                        if abs(predateur.distance(poisson,i)) < 5:
                             print("je mange")
                             poisson.vivant[i] = False
                          
@@ -316,7 +316,6 @@ class Simulation :
         return sum/niter
 
     def calcul_tableaux(self):
-        print(len(self.liste_de_poissons))
         for i in range(0, self.N):
  
             for p in range(0, len(self.liste_de_poissons)):
@@ -360,7 +359,7 @@ class Simulation :
                     poisson.positions[i+1, :] = poisson.positions[i, :] + self.dt * poisson.vitesses[i+1, :]
                 else :
                     poisson.positions[i+1, :] = poisson.positions[i, :]
-                poisson.vivant[i+1] = poisson.vivant[i]
+                
             
        
             for p in range(0, len(self.liste_de_predateurs)):
@@ -398,7 +397,8 @@ class Simulation :
                 predateur.positions[i+1, :] = predateur.positions[i, :] + self.dt * predateur.vitesses[i+1, :]
             
             self.test_manger(i)
-        print(len(self.liste_de_poissons))
+            poisson.vivant[i+1] = poisson.vivant[i]
+        print(self.liste_de_poissons[0].vivant)
                 
    
 
