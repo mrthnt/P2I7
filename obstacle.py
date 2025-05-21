@@ -463,12 +463,14 @@ def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
                 ymin=ymi
         lim = [xmin,xmax,ymin,ymax]
     fig, ax = plt.subplots(1,1,figsize=(15,5))
-    couleurs = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    couleurs = ['b', 'g', 'c', 'm', 'y']
     for i in range(len(simulation.liste_de_poissons)):
-        ax.plot(simulation.liste_de_poissons[i].positions[:,0],poisson.positions[:,1],couleurs[i%len(couleurs)]+'x')
+        ax.plot(simulation.liste_de_poissons[i].positions[:,0],simulation.liste_de_poissons[i].positions[:,1],couleurs[i%len(couleurs)]+':')
+    for predateur in simulation.liste_de_predateurs:
+        ax.plot(simulation.liste_de_predateurs[i].positions[:,0],simulation.liste_de_predateurs[i].positions[:,1],'r--')
     for obstacle in simulation.liste_obstacles:
         xo1,yo1,xo2,yo2 = obstacle.liste_limites
-        ax.plot([xo1,yo1],[xo2,yo2],'k')
+        ax.plot([xo1,xo2],[yo1,yo2],'k')
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_xlim([lim[0],lim[1]])
