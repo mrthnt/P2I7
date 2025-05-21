@@ -640,7 +640,9 @@ class Boid :
         self.positions = np.zeros((self.simulation.N+1, 2))
         self.vitesses = np.zeros((self.simulation.N+1, 2))
         self.accelerations = np.zeros((self.simulation.N+1, 2))
-
+        self.vivant = np.zeros(self.simulation.N+1)
+        
+        self.vivant[0] = True
         self.positions[0] = self.position_initiale
         self.vitesses[0] = self.vitesse_initiale
 
@@ -664,11 +666,9 @@ class Boid :
 
 class Poisson(Boid):
     
-    def __init__(self, position_initiale, vitesse_initiale, v_max, N):
+    def __init__(self, position_initiale, vitesse_initiale, v_max):
         super().__init__(position_initiale, vitesse_initiale)
         self.v_max = v_max
-        self.vivant = np.zeros(N+1)
-        self.vivant[0] = True
     
     def initialisation_matrices(self):
         super().initialisation_matrices()
@@ -749,16 +749,16 @@ def test_3():
     N = 500
     predateur = Predateur([0,0], [0,15], 600)
     predateur2 = Predateur([6,0], [15,0], 600)
-    poissons = generate_poissons(N)
+    poissons = generate_poissons()
     nouvelle_simu = Simulation(poissons, [predateur,predateur2], [Obstacle([-200,1,500,0])], N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
-def generate_poissons(N):
+def generate_poissons():
     return [Poisson([rng.random()*500, rng.random()*500-250],
                     [rng.random()*100-250, rng.random()*100-50],
-                    500,N)
+                    500)
             for _ in range(25)]
     
 def copier_poissons(liste_poissons):
