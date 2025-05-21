@@ -145,7 +145,7 @@ class Simulation :
                 if cos_angle > cos_angle_vision :
                     poisson.predateur_dans_vision.append(predateur)
       
-    def mise_a_jour_liste_predateurs(self, predateur, i, p, angle_de_vision = 180):
+    def mise_a_jour_liste_predateurs(self, predateur, i, p, angle_de_vision = 160):
         predateur.poisson_le_plus_proche = None
         predateur.predateur_dans_rayon_separation = []
                 
@@ -166,7 +166,7 @@ class Simulation :
                     norme_vitesse = np.linalg.norm(vecteur_vitesse)
                     cos_angle = np.dot(vecteur_voisin, vecteur_vitesse) / (norme_vitesse *distance_voisin)
                     
-                    if cos_angle < cos_angle_vision : 
+                    if cos_angle > cos_angle_vision : 
                         predateur.predateur_dans_rayon_separation.append(voisin)
         
         for proie in self.liste_de_poissons : 
@@ -178,12 +178,12 @@ class Simulation :
                 norme_vitesse = np.linalg.norm(vecteur_vitesse)
                 cos_angle = np.dot(vecteur_proie, vecteur_vitesse) / (norme_vitesse *distance_proie)
                 
-                if cos_angle < cos_angle_vision :
+                if cos_angle > cos_angle_vision :
                     if chasse != True:
                         if distance_proie < 25 : 
                             chasse == True
-                    liste_proies_en_visu.append(proie)
-                    liste_distance_proies.append(distance_proie)
+                        liste_proies_en_visu.append(proie)
+                        liste_distance_proies.append(distance_proie)
     
         if np.size(liste_distance_proies) > 0:
             minimum = liste_distance_proies[0]
@@ -247,10 +247,9 @@ class Simulation :
     def composante_acceleration_proie(self, predateur,i):
         res = np.zeros(2)
         boost = 0
-        proie = self.liste_de_poissons[0]
+        proie =predateur.poisson_le_plus_proche
         if proie != None:
             position_predateur = predateur.positions[i, :]
-            vitesse_predateur = predateur.vitesses[i, :]
             position_proie = proie.positions[i, :]
             distance_poisson_predateur = predateur.distance(proie, i)
             if distance_poisson_predateur < predateur.distance_chasse:
@@ -433,8 +432,12 @@ class GUI:
             pos,vit = self.simulation.liste_de_predateurs[j].positions[frame], self.simulation.liste_de_predateurs[j].vitesses[frame]
             new_coords = self.coords_triangle(pos, vit)
             self.triangles[j+len(self.simulation.liste_de_poissons)].set_xy(new_coords)
-        self.ax.set_xlim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0])
-        self.ax.set_ylim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1])
+        if len(self.simulation.liste_de_predateurs) != 0:
+            self.ax.set_xlim(-self.coord_lim+self.simulation.liste_de_predateurs[0].positions[frame][0], self.coord_lim+self.simulation.liste_de_predateurs[0].positions[frame][0])
+            self.ax.set_ylim(-self.coord_lim+self.simulation.liste_de_predateurs[0].positions[frame][1], self.coord_lim+self.simulation.liste_de_predateurs[0].positions[frame][1])
+        else : 
+            self.ax.set_xlim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][0])
+            self.ax.set_ylim(-self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1], self.coord_lim+self.simulation.liste_de_poissons[0].positions[frame][1])
         return self.triangles
     
     def update_non_suivi(self,frame):
