@@ -487,7 +487,6 @@ class Simulation :
 
                 ## Calcul du vecteur position au rang n+1
                 predateur.positions[i+1, :] = predateur.positions[i, :] + self.dt * predateur.vitesses[i+1, :]
-        print(self.liste_de_poissons[0].vivant)
                 
    
 
