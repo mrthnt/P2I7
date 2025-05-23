@@ -132,15 +132,21 @@ class Simulation :
                 
                             #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
                             #y = ax + b
-                            a_ob = (y2-y1)/(x2-x1); a1 = (y1-poisson.positions[i,1])/(x1-poisson.positions[i,0]); a2 = (y2-poisson.positions[i,1])/(x2-poisson.positions[i,0])
-                            b_ob = y1 - a_ob*x1; b1 = y1 - a1*x1; b2 = y2 - a2*x2
+                            a1 = (y1-poisson.positions[i,1])/(x1-poisson.positions[i,0]); a2 = (y2-poisson.positions[i,1])/(x2-poisson.positions[i,0])
+                            b1 = y1 - a1*x1; b2 = y2 - a2*x2
                             
                             pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
                             pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
                             
-                            #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                            if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (poisson.positions[i,1] > a_ob*poisson.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob):
-                                visible = False
+                            if x2!=x1:
+                                a_ob = (y2-y1)/(x2-x1)
+                                b_ob = y1 - a_ob*x1; 
+                                #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
+                                if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (poisson.positions[i,1] > a_ob*poisson.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob):
+                                    visible = False
+                            else:
+                                if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (poisson.positions[i,0] > x1) != (voisin.positions[i,0] > x1):
+                                    visible = False
                             j += 1
                         if visible and (cos_angle > cos_angle_vision):
     
@@ -171,15 +177,21 @@ class Simulation :
                 
                     #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
                     #y = ax + b
-                    a_ob = (y2-y1)/(x2-x1); a1 = (y1-poisson.positions[i,1])/(x1-poisson.positions[i,0]); a2 = (y2-poisson.positions[i,1])/(x2-poisson.positions[i,0])
-                    b_ob = y1 - a_ob*x1; b1 = y1 - a1*x1; b2 = y2 - a2*x2
+                    a1 = (y1-poisson.positions[i,1])/(x1-poisson.positions[i,0]); a2 = (y2-poisson.positions[i,1])/(x2-poisson.positions[i,0])
+                    b1 = y1 - a1*x1; b2 = y2 - a2*x2
                             
                     pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
                     pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                            
-                    #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                    if ((predateur.positions[i,1] > a1*predateur.positions[i,0] + b1) == pos1) and ((predateur.positions[i,1] > a2*predateur.positions[i,0] + b2) == pos2) and (poisson.positions[i,1] > a_ob*poisson.positions[i,0] + b_ob) != (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob):
-                        visible = False
+                    
+                    if x2!=x1:
+                        a_ob = (y2-y1)/(x2-x1)
+                        b_ob = y1 - a_ob*x1        
+                        #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
+                        if ((predateur.positions[i,1] > a1*predateur.positions[i,0] + b1) == pos1) and ((predateur.positions[i,1] > a2*predateur.positions[i,0] + b2) == pos2) and (poisson.positions[i,1] > a_ob*poisson.positions[i,0] + b_ob) != (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob):
+                            visible = False
+                    else:
+                        if ((predateur.positions[i,1] > a1*predateur.positions[i,0] + b1) == pos1) and ((predateur.positions[i,1] > a2*predateur.positions[i,0] + b2) == pos2) and (poisson.positions[i,0] > x1) != (predateur.positions[i,0] > x1):
+                            visible = False
                     j += 1
                             
                 if cos_angle > cos_angle_vision and visible:
@@ -214,15 +226,21 @@ class Simulation :
                 
                         #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
                         #y = ax + b
-                        a_ob = (y2-y1)/(x2-x1); a1 = (y1-predateur.positions[i,1])/(x1-predateur.positions[i,0]); a2 = (y2-predateur.positions[i,1])/(x2-predateur.positions[i,0])
-                        b_ob = y1 - a_ob*x1; b1 = y1 - a1*x1; b2 = y2 - a2*x2
+                        a1 = (y1-predateur.positions[i,1])/(x1-predateur.positions[i,0]); a2 = (y2-predateur.positions[i,1])/(x2-predateur.positions[i,0])
+                        b1 = y1 - a1*x1; b2 = y2 - a2*x2
                             
                         pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
                         pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                            
-                        #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                        if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob):
-                            visible = False
+                        
+                        if x2!=x1:
+                            a_ob = (y2-y1)/(x2-x1)
+                            b_ob = y1 - a_ob*x1     
+                            #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
+                            if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob):
+                                visible = False
+                        else:
+                            if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (predateur.positions[i,0] > x1) != (voisin.positions[i,0] > x1):
+                                visible = False
                         j += 1
                             
                     if cos_angle > cos_angle_vision and visible: 
@@ -245,15 +263,21 @@ class Simulation :
                 
                         #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
                         #y = ax + b
-                        a_ob = (y2-y1)/(x2-x1); a1 = (y1-predateur.positions[i,1])/(x1-predateur.positions[i,0]); a2 = (y2-predateur.positions[i,1])/(x2-predateur.positions[i,0])
-                        b_ob = y1 - a_ob*x1; b1 = y1 - a1*x1; b2 = y2 - a2*x2
+                        a1 = (y1-predateur.positions[i,1])/(x1-predateur.positions[i,0]); a2 = (y2-predateur.positions[i,1])/(x2-predateur.positions[i,0])
+                        b1 = y1 - a1*x1; b2 = y2 - a2*x2
                             
                         pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
                         pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                            
-                        #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                        if ((proie.positions[i,1] > a1*proie.positions[i,0] + b1) == pos1) and ((proie.positions[i,1] > a2*proie.positions[i,0] + b2) == pos2) and (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob) != (proie.positions[i,1] > a_ob*proie.positions[i,0] + b_ob):
-                            visible = False
+                        
+                        if x2!=x1:
+                            a_ob = (y2-y1)/(x2-x1)
+                            b_ob = y1 - a_ob*x1    
+                            #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
+                            if ((proie.positions[i,1] > a1*proie.positions[i,0] + b1) == pos1) and ((proie.positions[i,1] > a2*proie.positions[i,0] + b2) == pos2) and (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob) != (proie.positions[i,1] > a_ob*proie.positions[i,0] + b_ob):
+                                visible = False
+                        else:
+                            if ((proie.positions[i,1] > a1*proie.positions[i,0] + b1) == pos1) and ((proie.positions[i,1] > a2*proie.positions[i,0] + b2) == pos2) and ((proie.positions[i,0] > x1) != (predateur.positions[i,0] > x1)):
+                                visible = False
                         j += 1   
                          
                     if cos_angle > cos_angle_vision and visible:
@@ -270,8 +294,7 @@ class Simulation :
                 if liste_distance_proies[i]<minimum:
                     minimum = liste_distance_proies[i]
                     indice_min = i
-            predateur.poisson_le_plus_proche = liste_proies_en_visu[indice_min]
-                    
+            predateur.poisson_le_plus_proche = liste_proies_en_visu[indice_min]                
 
     def composante_acceleration_separation(self, poisson, i):
         res = np.zeros((2))
