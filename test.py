@@ -10,8 +10,9 @@ def test_3():
     obstacle3 = Obstacle([-200,-401,600,-401])
     obstacle4 = Obstacle([603,401,600,-401])
     liste_obstacle = [obstacle1,obstacle2,obstacle3,obstacle4]
+    predateurs = [predateur, predateur2]
     poissons = generate_poissons()
-    nouvelle_simu = Simulation(poissons, [predateur,predateur2],liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu = Simulation(poissons,predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
@@ -55,8 +56,9 @@ def test_3():
     poisson15 = Poisson([-50,250],[3,0],500)
     poisson16 = Poisson([-75,150], [0,-100], 500)
     poisson17 = Poisson([0,5],[0,0],500)
+    predateurs = [predateur,predateur2]
     poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
-    nouvelle_simu = Simulation(poissons, [predateur,predateur2],liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500,False)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
