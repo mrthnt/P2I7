@@ -60,6 +60,8 @@ def batiment1():
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500,False)
 
+
+### verifiaction que le mur coupe la vision
 def test_avec_mur():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
