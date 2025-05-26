@@ -120,3 +120,17 @@ def test_sans_mur():
     fenetre = GUI(nouvelle_simu)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
+def cas_test1():
+    distance_seuil = 100; alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 0; a_rng = 0
+    r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
+    N = 500
+    
+    poisson1 = Poisson([-100,100], [100,-100], 500)
+    poisson2 = Poisson([-100,-100], [100,100], 500)
+    predateurs = []
+    liste_obstacle = []
+    poissons = [poisson1,poisson2]
+    nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu.calcul_tableaux()
+    fenetre = GUI(nouvelle_simu)
+    print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
