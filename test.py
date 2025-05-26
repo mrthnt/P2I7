@@ -1,5 +1,5 @@
 ###ca fait une boite ou les poissons et les prédateurs sont enfermés
-def test_3():
+def boite():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
@@ -19,7 +19,7 @@ def test_3():
 
 
 ###ca fait une batiment avec 2 assaillants et 17 civils
-def test_3():
+def batiment1():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
@@ -62,3 +62,61 @@ def test_3():
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,500,False)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
+
+def test_avec_mur():
+    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
+    N = 500
+    ligne = Obstacle([0,300,0,-300])
+    liste_obstacle = [ligne]
+    poisson1 = Poisson([100,300], [5,0], 500)
+    poisson2 = Poisson([150,300], [5,0], 500)
+    poisson3 = Poisson([100,300], [5,0], 500)
+    poisson4 = Poisson([100,300], [5,0], 500)
+    poisson5 = Poisson([150,300], [5,0], 500)
+    poisson6 = Poisson([100,10], [5,0], 500)
+    poisson7 = Poisson([-100,0], [5,0], 500)
+    poisson12 = Poisson([-100,0], [5,0], 500)
+    poisson8 = Poisson([-150,-300], [5,0], 500)
+    poisson9 = Poisson([100,-325], [5,0], 500)
+    poisson10 = Poisson([100,400], [5,0], 500)
+    poisson11 = Poisson([100,400], [5,0], 500)
+    poisson13 = Poisson([-150,-200],[3,1], 500)
+    poisson14 = Poisson([-100,-200],[-2,0], 500)
+    poisson15 = Poisson([-50,250],[3,0],500)
+    poisson16 = Poisson([-75,150], [0,-100], 500)
+    predateurs = []
+    poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
+    nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu.calcul_tableaux()
+    fenetre = GUI(nouvelle_simu)
+    print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
+
+def test_sans_mur():
+    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
+    N = 500
+    liste_obstacle = []
+    poisson1 = Poisson([100,300], [5,0], 500)
+    poisson2 = Poisson([150,300], [5,0], 500)
+    poisson3 = Poisson([100,300], [5,0], 500)
+    poisson4 = Poisson([100,300], [5,0], 500)
+    poisson5 = Poisson([150,300], [5,0], 500)
+    poisson6 = Poisson([100,10], [5,0], 500)
+    poisson7 = Poisson([-100,0], [5,0], 500)
+    poisson12 = Poisson([-100,0], [5,0], 500)
+    poisson8 = Poisson([-150,-300], [5,0], 500)
+    poisson9 = Poisson([100,-325], [5,0], 500)
+    poisson10 = Poisson([100,400], [5,0], 500)
+    poisson11 = Poisson([100,400], [5,0], 500)
+    poisson13 = Poisson([-150,-200],[3,1], 500)
+    poisson14 = Poisson([-100,-200],[-2,0], 500)
+    poisson15 = Poisson([-50,250],[3,0],500)
+    poisson16 = Poisson([-75,150], [0,-100], 500)
+    predateurs = []
+    poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
+    nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu.calcul_tableaux()
+    fenetre = GUI(nouvelle_simu)
+    print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
+
