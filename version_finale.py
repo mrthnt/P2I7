@@ -749,38 +749,49 @@ def test_2():
     
     fenetre = GUI(nouvelle_simu, vitesse_lecture = 1.0)
 
+
 ###ca fait une batiment avec 2 assaillants et 17 civils
 def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
-    ligne = Obstacle([0,500,0,-500])
-    poisson1 = Poisson([-405,0], [-3,56], 500)
-    poisson2 = Poisson([-444,0], [-3,56], 500)
-    poisson3 = Poisson([-407,0], [23,4], 500)
-    poisson4 = Poisson([-302,35], [-3,56], 500)
-    poisson5 = Poisson([-405,64], [-3,56], 500)
-    poisson6 = Poisson([-400,-6], [24,56], 500)
-    poisson7 = Poisson([-430,35], [13,5], 500)
-    poisson8 = Poisson([-405,64], [-3,56], 500)
-    poisson9 = Poisson([-385,-6], [3,56], 500)
-    poisson10 = Poisson([405,0], [-3,56], 500)
-    poisson11 = Poisson([374,4], [0,0], 500)
-    poisson12 = Poisson([344,0], [-3,56], 500)
-    poisson13 = Poisson([307,0], [23,4], 500)
-    poisson14 = Poisson([432,35], [-3,56], 500)
-    poisson15 = Poisson([325,64], [-3,56], 500)
-    poisson16 = Poisson([405,-6], [-3,56], 500)
-    poisson17 = Poisson([430,35], [-13,5], 500)
-    poisson18 = Poisson([405,64], [-3,56], 500)
-    poisson19 = Poisson([485,-6], [3,56], 500)
-    liste_obstacle = [ligne]
-    predateurs = []
-    poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,
-                poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16,poisson17,poisson18,poisson19]
-    nouvelle_simu = Simulation(poissons,predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    predateur = Predateur([0,0], [0,15], 600)
+    predateur2 = Predateur([6,0], [15,0], 600)
+    bord_gauche = Obstacle([-200,400,-200,-400])
+    bord_haut = Obstacle([-200,400,600,400])
+    bord_bas_gauche = Obstacle([-200,-400,100,-400])
+    bord_bas_droit = Obstacle([600,-400,300,-400])
+    bord_droit = Obstacle([600,400,600,-400])
+    centre_gauche_haut = Obstacle([0,50,100,150])
+    centre_gauche_bas = Obstacle([0,50,100,-50])
+    centre_droit_haut = Obstacle([200,50,100,150])
+    centre_droit_bas = Obstacle([200,50,100,-50])
+    ligne_bas = Obstacle([200,-200,600,-200])
+    liste_obstacle = [bord_bas_droit,bord_droit,bord_haut,bord_gauche,bord_bas_gauche,
+                      centre_droit_bas,centre_droit_haut,centre_gauche_haut,centre_gauche_bas,
+                      ligne_bas
+                      ]
+    poisson1 = Poisson([200,300], [5,0], 500)
+    poisson2 = Poisson([250,300], [5,0], 500)
+    poisson3 = Poisson([300,300], [5,0], 500)
+    poisson4 = Poisson([400,300], [5,0], 500)
+    poisson5 = Poisson([450,300], [5,0], 500)
+    poisson6 = Poisson([200,10], [5,0], 500)
+    poisson7 = Poisson([-200,0], [5,0], 500)
+    poisson12 = Poisson([-200,0], [5,0], 500)
+    poisson8 = Poisson([250,-300], [5,0], 500)
+    poisson9 = Poisson([400,-325], [5,0], 500)
+    poisson10 = Poisson([200,400], [5,0], 500)
+    poisson11 = Poisson([200,400], [5,0], 500)
+    poisson13 = Poisson([-150,-200],[3,1], 500)
+    poisson14 = Poisson([-100,-200],[-2,0], 500)
+    poisson15 = Poisson([-50,250],[3,0],500)
+    poisson16 = Poisson([-75,150], [0,-100], 500)
+    poisson17 = Poisson([0,5],[0,0],500)
+    poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
+    nouvelle_simu = Simulation(poissons, [predateur,predateur2],liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,700,False)
+    fenetre = graphe_pos(nouvelle_simu)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
 def generate_poissons():
@@ -845,7 +856,7 @@ def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
     for i in range(len(simulation.liste_de_poissons)):
         ax.plot(simulation.liste_de_poissons[i].positions[:,0],simulation.liste_de_poissons[i].positions[:,1],couleurs[i%len(couleurs)]+':')
     for predateur in simulation.liste_de_predateurs:
-        ax.plot(simulation.liste_de_predateurs[i].positions[:,0],simulation.liste_de_predateurs[i].positions[:,1],'r--')
+        ax.plot(predateur.positions[:,0],predateur.positions[:,1],'r--')
     for obstacle in simulation.liste_obstacles:
         xo1,yo1,xo2,yo2 = obstacle.liste_limites
         ax.plot([xo1,xo2],[yo1,yo2],'k')
@@ -856,6 +867,7 @@ def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
     ax.grid()
     ax.legend()
     plt.title("positions des boïds (Y en fonction de X)")    
+    plt.axis("equal")
     plt.show()
 
 def recherche_alignement():
