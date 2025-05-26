@@ -108,57 +108,49 @@ class Simulation :
         poisson.poissons_dans_rayon_separation = []
         poisson.predateur_dans_vision = []
 
+        dico_voisin = {'cohesion' : [],
+                       'separation' : [],
+                       'alignement' : []}
+
+        dico_rayons = {'cohesion' : self.rayon_cohesion,
+                       'separation' : self.rayon_separation,
+                       'alignement' : self.rayon_alignement}
+        
+        liste_rayon_ordonnes = sorted(dico_rayons.items(), key=lambda x: x[1])
+        
         cos_angle_vision = np.cos(np.deg2rad(angle_de_vision))
 
         for i_poisson in range (0, len(self.liste_de_poissons)):
+
             if i_poisson != p :
                 voisin = self.liste_de_poissons[i_poisson]
-                if voisin.vivant[i] == True:                   
-                    distance_poisson_voisin_i = poisson.distance(voisin, i)
-    
-                
-                    if distance_poisson_voisin_i < max(self.rayon_alignement, self.rayon_cohesion, self.rayon_separation):
-                        vecteur_vitesse = poisson.vitesses[i, :]
-                        vecteur_poisson_voisin = voisin.positions[i, :] - poisson.positions[i, :]
-                        norme_vitesse = np.linalg.norm(vecteur_vitesse)
-                
-                        cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
-                        
-                        visible = True
-                        j = 0
-                        while visible and j < len(self.liste_obstacles): #while car non visible si visible selon un obstacle et non visible selon un autre
-                            obstacle = self.liste_obstacles[j]
-                            x1, y1, x2, y2 = obstacle.liste_limites #coordonées du point 1 et 2 de l'obstacle
-                
-                            #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
-                            #y = ax + b
-                            a1 = (y1-poisson.positions[i,1])/(x1-poisson.positions[i,0]); a2 = (y2-poisson.positions[i,1])/(x2-poisson.positions[i,0])
-                            b1 = y1 - a1*x1; b2 = y2 - a2*x2
-                            
-                            pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
-                            pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                            
-                            if x2!=x1:
-                                a_ob = (y2-y1)/(x2-x1)
-                                b_ob = y1 - a_ob*x1; 
-                                #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                                if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (poisson.positions[i,1] > a_ob*poisson.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob):
-                                    visible = False
-                            else:
-                                if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (poisson.positions[i,0] > x1) != (voisin.positions[i,0] > x1):
-                                    visible = False
-                            j += 1
-                        if visible and (cos_angle > cos_angle_vision):
-    
-                            if distance_poisson_voisin_i < self.rayon_alignement:
-    
-                                poisson.poissons_dans_rayon_alignement.append(voisin)
-                            if distance_poisson_voisin_i < self.rayon_cohesion:
-    
-                                poisson.poissons_dans_rayon_cohesion.append(voisin)
-                            if distance_poisson_voisin_i < self.rayon_separation:
-    
-                                poisson.poissons_dans_rayon_separation.append(voisin)
+                distance_poisson_voisin_i = poisson.distance(voisin, i)
+
+            
+                if distance_poisson_voisin_i < max(self.rayon_alignement, self.rayon_cohesion, self.rayon_separation):
+                    vecteur_vitesse = poisson.vitesses[i, :]
+                    vecteur_poisson_voisin = voisin.positions[i, :] - poisson.positions[i, :]
+                    norme_vitesse = np.linalg.norm(vecteur_vitesse)
+            
+                    cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
+                    
+                    if cos_angle > cos_angle_vision :
+
+                        comportement, rayon = liste_rayon_ordonnes[0]
+                        #print(liste_rayon_ordonnes[0][1])
+                        if distance_poisson_voisin_i < int(liste_rayon_ordonnes[0][1]):
+                            dico_voisin[liste_rayon_ordonnes[0][0]].append(voisin)
+
+                        elif distance_poisson_voisin_i < int(liste_rayon_ordonnes[1][1]):
+                            dico_voisin[liste_rayon_ordonnes[1][0]].append(voisin)
+
+                        elif distance_poisson_voisin_i < int(liste_rayon_ordonnes[2][1]):
+                            dico_voisin[liste_rayon_ordonnes[2][0]].append(voisin)
+
+                    #print(liste_rayon_ordonnes[0])
+        poisson.poissons_dans_rayon_cohesion   = dico_voisin['cohesion']
+        poisson.poissons_dans_rayon_alignement = dico_voisin['alignement']
+        poisson.poissons_dans_rayon_separation = dico_voisin['separation']
             
         for predateur in self.liste_de_predateurs:
             distance_predateur = poisson.distance(predateur, i)
@@ -394,7 +386,7 @@ class Simulation :
                 for poisson in self.liste_de_poissons:
                     if poisson.vivant[i] == True :
                         if abs(predateur.distance(poisson,i)) < 25:
-                            print("je mange")
+                            #print("je mange")
                             poisson.vivant[i] = False
                          
     
@@ -444,20 +436,16 @@ class Simulation :
                     
                     a_obstacle = self.composante_acceleration_obstacles(poisson, i)
                     
-                    n1_rand = (rng.random() - 0.4) * self.a_rng   ## le vecteur vitesse aleatoire comprend des valeurs allant de -0,4 x a_rng à 0,6 x a_rng
-                    n2_rand = (rng.random()*2 - 1) * 3            ## angle de rotation aléatoire de la vitesse aléatoire par rapoort à celle d'avant
+                    poisson.angle_accel_alea = poisson.angle_accel_alea + rng.uniform(-0.5, 0.5)   ## le vecteur vitesse aleatoire comprend des valeurs allant de -0,4 x a_rng à 0,6 x a_rng
+                
+                    a_aleatoire = np.array([self.a_rng * np.cos(poisson.angle_accel_alea), self.a_rng * np.sin(poisson.angle_accel_alea)])
     
-                    matrice_rotation = np.array([
-                    [np.cos(n2_rand), -np.sin(n2_rand)],
-                    [np.sin(n2_rand),  np.cos(n2_rand)]
-                    ])
-    
-                    poisson.accelerations[i+1, :] = a_cohesion + a_separation + a_alignement + a_predation + a_obstacle
+                    poisson.accelerations[i+1, :] = a_cohesion + a_separation + a_alignement + a_predation + a_obstacle + a_aleatoire
     
     
                     
                     ## Calcul du vecteur vitesse au rang n+1
-                    vecteur_vitesse = poisson.vitesses[i, :] + self.dt * poisson.accelerations[i+1, :] + n1_rand*(matrice_rotation @ (poisson.vitesses[i, :])/np.linalg.norm(poisson.vitesses[i, :]))
+                    vecteur_vitesse = poisson.vitesses[i, :] + self.dt * poisson.accelerations[i+1, :]
     
                     ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
                     norme_vitesse = np.linalg.norm(vecteur_vitesse)
@@ -484,22 +472,17 @@ class Simulation :
                 a_proies = self.composante_acceleration_proie(predateur, i)
                 a_separation_predateurs = self.composante_acceleration_separation_predateurs(predateur, i)
                 a_obstacle = self.composante_acceleration_obstacles(predateur, i)
-    
-        
-                n1_rand = (rng.random() - 0.4) * self.a_rng   ## le vecteur vitesse aleatoire comprend des valeurs allant de -0,4 x a_rng à 0,6 x a_rng
-                n2_rand = (rng.random()*2 - 1) * 3            ## angle de rotation aléatoire de la vitesse aléatoire par rapoort à celle d'avant
+                
+                predateur.angle_accel_alea = predateur.angle_accel_alea + rng.uniform(-0.5, 0.5)   ## le vecteur vitesse aleatoire comprend des valeurs allant de -0,4 x a_rng à 0,6 x a_rng
+               
+                a_aleatoire = np.array([self.a_rng * np.cos(predateur.angle_accel_alea), self.a_rng * np.sin(predateur.angle_accel_alea)])
 
-                matrice_rotation = np.array([
-                    [np.cos(n2_rand), -np.sin(n2_rand)],
-                    [np.sin(n2_rand),  np.cos(n2_rand)]
-                    ])
-
-                predateur.accelerations[i+1, :] = a_proies + a_separation_predateurs + a_obstacle
+                predateur.accelerations[i+1, :] = a_proies + a_separation_predateurs + a_obstacle + a_aleatoire
 
 
             
                 ## Calcul du vecteur vitesse au rang n+1
-                vecteur_vitesse = predateur.vitesses[i, :] + self.dt * predateur.accelerations[i+1, :] + n1_rand*(matrice_rotation @ (predateur.vitesses[i, :])/np.linalg.norm(predateur.vitesses[i, :]))
+                vecteur_vitesse = predateur.vitesses[i, :] + self.dt * predateur.accelerations[i+1, :]
                     
                 ## Ajustement du vecteur vitesse pour avoir une vitesse inférieur à v_max
                 norme_vitesse = np.linalg.norm(vecteur_vitesse)
@@ -653,6 +636,7 @@ class Boid :
     def __init__(self, position_initiale, vitesse_initiale):
         self.position_initiale = position_initiale
         self.vitesse_initiale = vitesse_initiale
+        self.angle_accel_alea = rng.uniform(0, 2 * np.pi)
         
     def ajouter_simulation(self, simulation):
         self.simulation = simulation
@@ -765,16 +749,38 @@ def test_2():
     
     fenetre = GUI(nouvelle_simu, vitesse_lecture = 1.0)
 
+###ca fait une batiment avec 2 assaillants et 17 civils
 def test_3():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
-    predateur = Predateur([0,0], [0,15], 600)
-    predateur2 = Predateur([6,0], [15,0], 600)
-    poissons = generate_poissons()
-    nouvelle_simu = Simulation(poissons, [predateur,predateur2], [Obstacle([-200,1,500,0])], N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    ligne = Obstacle([0,500,0,-500])
+    poisson1 = Poisson([-405,0], [-3,56], 500)
+    poisson2 = Poisson([-444,0], [-3,56], 500)
+    poisson3 = Poisson([-407,0], [23,4], 500)
+    poisson4 = Poisson([-302,35], [-3,56], 500)
+    poisson5 = Poisson([-405,64], [-3,56], 500)
+    poisson6 = Poisson([-400,-6], [24,56], 500)
+    poisson7 = Poisson([-430,35], [13,5], 500)
+    poisson8 = Poisson([-405,64], [-3,56], 500)
+    poisson9 = Poisson([-385,-6], [3,56], 500)
+    poisson10 = Poisson([405,0], [-3,56], 500)
+    poisson11 = Poisson([374,4], [0,0], 500)
+    poisson12 = Poisson([344,0], [-3,56], 500)
+    poisson13 = Poisson([307,0], [23,4], 500)
+    poisson14 = Poisson([432,35], [-3,56], 500)
+    poisson15 = Poisson([325,64], [-3,56], 500)
+    poisson16 = Poisson([405,-6], [-3,56], 500)
+    poisson17 = Poisson([430,35], [-13,5], 500)
+    poisson18 = Poisson([405,64], [-3,56], 500)
+    poisson19 = Poisson([485,-6], [3,56], 500)
+    liste_obstacle = [ligne]
+    predateurs = []
+    poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,
+                poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16,poisson17,poisson18,poisson19]
+    nouvelle_simu = Simulation(poissons,predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,500)
+    fenetre = GUI(nouvelle_simu,1,700,False)
     print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
 def generate_poissons():
@@ -813,7 +819,7 @@ def meshgrid():
     plt.ylabel('alpha_alignement')
     plt.title("Carte de paramètre d'ordre")
     plt.show()
-
+    
 def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
     if lim == [0,0,0,0]:
         xmax = np.max(simulation.liste_de_poissons[0].positions[:,0])
@@ -850,8 +856,7 @@ def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
     ax.grid()
     ax.legend()
     plt.title("positions des boïds (Y en fonction de X)")    
-    plt.show()    
-
+    plt.show()
 
 def recherche_alignement():
     distance_seuil = 100; alpha_cohesion = 3; alpha_separation = 10000; a_rng = 60
