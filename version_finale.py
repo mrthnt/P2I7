@@ -101,6 +101,43 @@ class Simulation :
             
             return None, vitesse_moy
 
+    def voisin_visible(self,boid,voisin,i):
+        visible = True
+        j = 0
+        while visible and j < len(self.liste_obstacles): #while car non visible si visible selon un obstacle et non visible selon un autre
+            obstacle = self.liste_obstacles[j]
+            x1, y1, x2, y2 = obstacle.liste_limites #coordonées du point 1 et 2 de l'obstacle
+                
+            #on calcule les équations de droite (si elles existent) de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
+            #y = ax + b
+            
+            if x1!=boid.positions[i,0]:
+                a1 = (y1-boid.positions[i,1])/(x1-boid.positions[i,0]); 
+                b1 = y1 - a1*x1
+                cond1 = (voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == (y2>a1*x2 + b1)
+            else:
+                cond1 = (voisin.positions[i,0] > x1) == (x2>x1)
+                
+            if x2!=boid.positions[i,0]:
+                a2 = (y2-boid.positions[i,1])/(x2-boid.positions[i,0])
+                b2 = y2 - a2*x2
+                cond2 = (voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == (y1>a2*x1 + b2)
+            else:     
+                cond2 = (voisin.positions[i,0] > x2) == (x1>x2)     
+                   
+            if x2!=x1:
+                a_ob = (y2-y1)/(x2-x1)
+                b_ob = y1 - a_ob*x1
+                cond3 = (boid.positions[i,1] > a_ob*boid.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob) 
+            else:
+                cond3 = (boid.positions[i,0] > x1) != (voisin.positions[i,0] > x1)       
+            
+            #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
+            if cond1 and cond2 and cond3:
+                visible = False
+            j += 1
+        return visible
+        
     def mise_a_jour_liste_poissons(self, poisson, i, p, angle_de_vision = 150):
 
         poisson.poissons_dans_rayon_cohesion   = []
@@ -134,7 +171,7 @@ class Simulation :
             
                     cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
                     
-                    if cos_angle > cos_angle_vision :
+                    if cos_angle > cos_angle_vision and self.voisin_visible(poisson,voisin,i):
 
                         comportement, rayon = liste_rayon_ordonnes[0]
                         #print(liste_rayon_ordonnes[0][1])
@@ -160,33 +197,8 @@ class Simulation :
                 vecteur_predateur = predateur.positions[i, :] - poisson.positions[i, :]
                 norme_vitesse = np.linalg.norm(vecteur_vitesse)
                 cos_angle = np.dot(vecteur_predateur, vecteur_vitesse) / (norme_vitesse *distance_predateur)
-                
-                visible = True
-                j = 0
-                while visible and j < len(self.liste_obstacles): #while car non visible si visible selon un obstacle et non visible selon un autre
-                    obstacle = self.liste_obstacles[j]
-                    x1, y1, x2, y2 = obstacle.liste_limites #coordonées du point 1 et 2 de l'obstacle
-                
-                    #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
-                    #y = ax + b
-                    a1 = (y1-poisson.positions[i,1])/(x1-poisson.positions[i,0]); a2 = (y2-poisson.positions[i,1])/(x2-poisson.positions[i,0])
-                    b1 = y1 - a1*x1; b2 = y2 - a2*x2
-                            
-                    pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
-                    pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                    
-                    if x2!=x1:
-                        a_ob = (y2-y1)/(x2-x1)
-                        b_ob = y1 - a_ob*x1        
-                        #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                        if ((predateur.positions[i,1] > a1*predateur.positions[i,0] + b1) == pos1) and ((predateur.positions[i,1] > a2*predateur.positions[i,0] + b2) == pos2) and (poisson.positions[i,1] > a_ob*poisson.positions[i,0] + b_ob) != (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob):
-                            visible = False
-                    else:
-                        if ((predateur.positions[i,1] > a1*predateur.positions[i,0] + b1) == pos1) and ((predateur.positions[i,1] > a2*predateur.positions[i,0] + b2) == pos2) and (poisson.positions[i,0] > x1) != (predateur.positions[i,0] > x1):
-                            visible = False
-                    j += 1
-                            
-                if cos_angle > cos_angle_vision and visible:
+                                            
+                if cos_angle > cos_angle_vision and self.voisin_visible(poisson,predateur,i):
                     poisson.predateur_dans_vision.append(predateur)
       
     def mise_a_jour_liste_predateurs(self, predateur, i, p, angle_de_vision = 160):
@@ -209,33 +221,8 @@ class Simulation :
                     vecteur_voisin = voisin.positions[i, :] - predateur.positions[i, :]
                     norme_vitesse = np.linalg.norm(vecteur_vitesse)
                     cos_angle = np.dot(vecteur_voisin, vecteur_vitesse) / (norme_vitesse *distance_voisin)
-                    
-                    visible = True
-                    j = 0
-                    while visible and j < len(self.liste_obstacles): #while car non visible si visible selon un obstacle et non visible selon un autre
-                        obstacle = self.liste_obstacles[j]
-                        x1, y1, x2, y2 = obstacle.liste_limites #coordonées du point 1 et 2 de l'obstacle
-                
-                        #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
-                        #y = ax + b
-                        a1 = (y1-predateur.positions[i,1])/(x1-predateur.positions[i,0]); a2 = (y2-predateur.positions[i,1])/(x2-predateur.positions[i,0])
-                        b1 = y1 - a1*x1; b2 = y2 - a2*x2
                             
-                        pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
-                        pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                        
-                        if x2!=x1:
-                            a_ob = (y2-y1)/(x2-x1)
-                            b_ob = y1 - a_ob*x1     
-                            #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                            if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob) != (voisin.positions[i,1] > a_ob*voisin.positions[i,0] + b_ob):
-                                visible = False
-                        else:
-                            if ((voisin.positions[i,1] > a1*voisin.positions[i,0] + b1) == pos1) and ((voisin.positions[i,1] > a2*voisin.positions[i,0] + b2) == pos2) and (predateur.positions[i,0] > x1) != (voisin.positions[i,0] > x1):
-                                visible = False
-                        j += 1
-                            
-                    if cos_angle > cos_angle_vision and visible: 
+                    if cos_angle > cos_angle_vision and self.voisin_visible(predateur,voisin,i): 
                         predateur.predateur_dans_rayon_separation.append(voisin)
         
         for proie in self.liste_de_poissons : 
@@ -246,33 +233,8 @@ class Simulation :
                     vecteur_proie = proie.positions[i, :] - predateur.positions[i, :]
                     norme_vitesse = np.linalg.norm(vecteur_vitesse)
                     cos_angle = np.dot(vecteur_proie, vecteur_vitesse) / (norme_vitesse *distance_proie)
-                    
-                    visible = True
-                    j = 0
-                    while visible and j < len(self.liste_obstacles): #while car non visible si visible selon un obstacle et non visible selon un autre
-                        obstacle = self.liste_obstacles[j]
-                        x1, y1, x2, y2 = obstacle.liste_limites #coordonées du point 1 et 2 de l'obstacle
-                
-                        #on calcule les équations de droite de: l'obstacle, la droite coupant le poisson et le point 1, la droite coupant le poisson et le point 2
-                        #y = ax + b
-                        a1 = (y1-predateur.positions[i,1])/(x1-predateur.positions[i,0]); a2 = (y2-predateur.positions[i,1])/(x2-predateur.positions[i,0])
-                        b1 = y1 - a1*x1; b2 = y2 - a2*x2
-                            
-                        pos1 = (y2>a1*x2 + b1) #on regarde si le point 2 de l'obstacle est au dessus de la droite coupant le poisson et le point 1
-                        pos2 = (y1>a2*x1 + b2) #on regarde si le point 1 de l'obstacle est au dessus de la droite coupant le poisson et le point 2
-                        
-                        if x2!=x1:
-                            a_ob = (y2-y1)/(x2-x1)
-                            b_ob = y1 - a_ob*x1    
-                            #Si un poisson n'est pas visible, c'est qu'il est dans l'intersection de l'espace de l'autre côté de l'obstacle et de celui "entre" les droites 1 et 2
-                            if ((proie.positions[i,1] > a1*proie.positions[i,0] + b1) == pos1) and ((proie.positions[i,1] > a2*proie.positions[i,0] + b2) == pos2) and (predateur.positions[i,1] > a_ob*predateur.positions[i,0] + b_ob) != (proie.positions[i,1] > a_ob*proie.positions[i,0] + b_ob):
-                                visible = False
-                        else:
-                            if ((proie.positions[i,1] > a1*proie.positions[i,0] + b1) == pos1) and ((proie.positions[i,1] > a2*proie.positions[i,0] + b2) == pos2) and ((proie.positions[i,0] > x1) != (predateur.positions[i,0] > x1)):
-                                visible = False
-                        j += 1   
-                         
-                    if cos_angle > cos_angle_vision and visible:
+                                         
+                    if cos_angle > cos_angle_vision and self.voisin_visible(predateur,proie,i):
                         if chasse != True:
                             if distance_proie < 25 : 
                                 chasse == True
@@ -367,7 +329,7 @@ class Simulation :
         for obstacle in self.liste_obstacles:
             vecteur_normal, projete_tan = poisson.infos_distance(obstacle, i)
             projete_normal = np.linalg.norm(vecteur_normal)
-            if projete_normal <= obstacle.distance_repulsion and abs(projete_tan)<obstacle.longueur/2:
+            if projete_normal <= obstacle.distance_repulsion and abs(projete_tan)<obstacle.longueur/2 and np.linalg.norm(vecteur_normal) != 0:
                 res += obstacle.coefficient_repulsion*vecteur_normal/(np.linalg.norm(vecteur_normal))**2
         return res 
         
@@ -860,7 +822,6 @@ def graphe_pos(simulation,lim=[0,0,0,0]): #xmin,xmax,ymin,ymax
     ax.set_xlim([lim[0],lim[1]])
     ax.set_ylim([lim[2],lim[3]])
     ax.grid()
-    ax.legend()
     plt.title("positions des boïds (Y en fonction de X)")    
     plt.axis("equal")
     plt.show()
