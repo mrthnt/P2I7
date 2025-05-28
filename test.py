@@ -53,7 +53,7 @@ def batiment1():
     poisson14 = Poisson([-100,-200],[-2,0], 500)
     poisson15 = Poisson([-50,250],[3,0],500)
     poisson16 = Poisson([-75,150], [0,-100], 500)
-    poisson17 = Poisson([0,5],[0,0],500)
+    poisson17 = Poisson([0,5],[9,0],500)
     predateurs = [predateur,predateur2]
     poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
