@@ -339,17 +339,13 @@ class Simulation :
             
     def composante_acceleration_proie(self, predateur,i):
         res = np.zeros(2)
-        boost = 0
         proie =predateur.poisson_le_plus_proche
         if proie != None:
             position_predateur = predateur.positions[i, :]
             position_proie = proie.positions[i, :]
-            distance_poisson_predateur = predateur.distance(proie, i)
-            if distance_poisson_predateur < predateur.distance_chasse:
-                boost = 150
             vecteur_direction = position_proie - position_predateur
             vec_dir =vecteur_direction/np.linalg.norm(vecteur_direction)
-            res = 150*self.alpha_alignement * vec_dir + boost *vec_dir
+            res = 150*self.alpha_alignement * vec_dir
         return res
     
     def composante_acceleration_separation_predateurs(self, predateur, i):
@@ -633,10 +629,11 @@ class GUI:
 
 class Boid :
     
-    def __init__(self, position_initiale, vitesse_initiale):
+    def __init__(self, position_initiale, vitesse_initiale,v_max):
         self.position_initiale = position_initiale
         self.vitesse_initiale = vitesse_initiale
         self.angle_accel_alea = rng.uniform(0, 2 * np.pi)
+        self.v_max = v_max
         
     def ajouter_simulation(self, simulation):
         self.simulation = simulation
@@ -673,8 +670,8 @@ class Boid :
 class Poisson(Boid):
     
     def __init__(self, position_initiale, vitesse_initiale, v_max):
-        super().__init__(position_initiale, vitesse_initiale)
-        self.v_max = v_max
+        super().__init__(position_initiale, vitesse_initiale,v_max)
+        
     
     def initialisation_matrices(self):
         super().initialisation_matrices()
@@ -686,10 +683,8 @@ class Poisson(Boid):
         
 class Predateur(Boid):
     
-    def __init__(self, position_initiale, vitesse_initiale, v_max, distance_chasse=25.0):
-        super().__init__(position_initiale, vitesse_initiale)
-        self.v_max = v_max
-        self.distance_chasse = distance_chasse
+    def __init__(self, position_initiale, vitesse_initiale, v_max):
+        super().__init__(position_initiale, vitesse_initiale,v_max)
     
     
     def initialisation_matrices(self):
