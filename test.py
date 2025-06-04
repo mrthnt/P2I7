@@ -120,7 +120,7 @@ def test_sans_mur():
 def cas_test1():
     alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 0; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
-    N = 250
+    N = 60
     
     poisson1 = Poisson([-100,100], [500,-500], 500)
     poisson2 = Poisson([-100,-100], [500,500], 500)
@@ -129,12 +129,12 @@ def cas_test1():
     poissons = [poisson1,poisson2]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu)
+    fenetre = GUI(nouvelle_simu,suivi=False)
 
 def cas_test2():
-    alpha_cohesion = 0; alpha_separation = 10000; alpha_alignement = 0; a_rng = 0
+    alpha_cohesion = 0; alpha_separation = 80000; alpha_alignement = 0; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
-    N = 250
+    N = 60
     
     poisson1 = Poisson([-100,100], [500,-500], 500)
     poisson2 = Poisson([-100,-100], [500,500], 500)
@@ -143,12 +143,12 @@ def cas_test2():
     poissons = [poisson1,poisson2]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu)
+    fenetre = GUI(nouvelle_simu,suivi=False)
 
 def cas_test3():
     alpha_cohesion = 20; alpha_separation = 0; alpha_alignement = 0; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 150
     
     poisson1 = Poisson([-100,100], [500,-500], 500)
     poisson2 = Poisson([-100,-100], [500,500], 500)
@@ -157,27 +157,27 @@ def cas_test3():
     poissons = [poisson1,poisson2]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,500)
+    fenetre = GUI(nouvelle_simu,1,450,suivi=False)
     
 def cas_test4():
     alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 10; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
-    N = 250
+    N = 150
     
-    poisson1 = Poisson([-100,100], [500,-500], 500)
-    poisson2 = Poisson([-100,-100], [500,500], 500)
+    poisson1 = Poisson([-200,200], [500,-500], 500)
+    poisson2 = Poisson([-200,-200], [500,500], 500)
     predateurs = []
     liste_obstacle = []
     poissons = [poisson1,poisson2]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,500)
+    fenetre = GUI(nouvelle_simu,1,300,suivi=False)
 
 #### PENSER A MODIF LES VALEURS D'ANGLE VISION
 def cas_test5():
-    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
-    r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
-    N = 250
+    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 6; a_rng = 60
+    r_cohesion = 600; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
+    N = 90
     
     poisson1 = Poisson([-50,50], [0,500], 500)
     poisson2 = Poisson([0,0], [500,0], 500)
@@ -186,4 +186,4 @@ def cas_test5():
     poissons = [poisson1,poisson2]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu,1,500)
+    fenetre = GUI(nouvelle_simu,1,300,suivi=False)
