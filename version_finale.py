@@ -456,18 +456,18 @@ class Simulation :
 
 class GUI:
         def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 300, suivi = True, gif = False):
-        self.simulation = simulation
-        
-        self.coord_lim = coord_lim #utile pour update_suivi(frame)
-        self.fig, self.ax = plt.subplots()
-        self.ax.set_xlim(-coord_lim, coord_lim)
-        self.ax.set_ylim(-coord_lim, coord_lim)
-        self.ax.set_aspect('equal')
-
-        self.obstacles = []
-        self.init_obstacles()
-        self.triangles = []
-        self.init_triangles()
+            self.simulation = simulation
+            
+            self.coord_lim = coord_lim #utile pour update_suivi(frame)
+            self.fig, self.ax = plt.subplots()
+            self.ax.set_xlim(-coord_lim, coord_lim)
+            self.ax.set_ylim(-coord_lim, coord_lim)
+            self.ax.set_aspect('equal')
+    
+            self.obstacles = []
+            self.init_obstacles()
+            self.triangles = []
+            self.init_triangles()
 
         if suivi == True:
             self.ax.grid()
@@ -669,93 +669,7 @@ class Obstacle():
 
 
 
-def test_1():
-    distance_seuil = 100; alpha_cohesion = 1; alpha_separation = 1; alpha_alignement = 1; a_rng = 0.2
-    
-    poisson1 = Poisson([-1, -2], [0, 0], 20)
-    poisson2 = Poisson([2, 2], [5, 0], 20)
-    poisson3 = Poisson([0, 0], [1, -3], 20)
-    
-    la_simu = Simulation([poisson1, poisson2, poisson3], [], 5, 0.1, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng)
-    
-    print(poisson1)
-    print()
-    print(poisson2)
-    print()
-    
-    distance = poisson1.distance(poisson2, 0)
-    print(distance)
-    print()
-    
-    poisson_voisin = la_simu.voisin_le_plus_proche(0, 0)
-    print(poisson_voisin)
-    print()
-    
-    centre = la_simu.centre_masse_poissons(0)
-    print(centre)
-    v_moy = la_simu.vitesse_banc_poissons(0)
-    print(v_moy)
-    print("\n")
 
-def test_2():
-    distance_seuil = 100; alpha_cohesion = 10; alpha_separation = 1000; alpha_alignement = 10; a_rng = 80
-    r_cohesion = 400; r_separation = 60; r_alignement = 10
-    #r_cohesion = 0; r_separation = 0; r_alignement = 0
-    N = 5000
-    poisson4 = Poisson([-100, -100], [100, 100], 500)
-    poisson5 = Poisson([100, 100], [-100, -100], 500)
-    
-
-    
-    nouvelle_simu = Simulation([poisson4, poisson5], [], N, 0.01, distance_seuil, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement)
-    nouvelle_simu.calcul_tableaux()
-    
-    fenetre = GUI(nouvelle_simu, vitesse_lecture = 1.0)
-
-
-###ca fait une batiment avec 2 assaillants et 17 civils
-def test_3():
-    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
-    r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
-    N = 500
-    predateur = Predateur([0,0], [0,15], 600)
-    predateur2 = Predateur([6,0], [15,0], 600)
-    bord_gauche = Obstacle([-200,400,-200,-400])
-    bord_haut = Obstacle([-200,400,600,400])
-    bord_bas_gauche = Obstacle([-200,-400,100,-400])
-    bord_bas_droit = Obstacle([600,-400,300,-400])
-    bord_droit = Obstacle([600,400,600,-400])
-    centre_gauche_haut = Obstacle([0,50,100,150])
-    centre_gauche_bas = Obstacle([0,50,100,-50])
-    centre_droit_haut = Obstacle([200,50,100,150])
-    centre_droit_bas = Obstacle([200,50,100,-50])
-    ligne_bas = Obstacle([200,-200,600,-200])
-    liste_obstacle = [bord_bas_droit,bord_droit,bord_haut,bord_gauche,bord_bas_gauche,
-                      centre_droit_bas,centre_droit_haut,centre_gauche_haut,centre_gauche_bas,
-                      ligne_bas
-                      ]
-    poisson1 = Poisson([200,300], [5,0], 500)
-    poisson2 = Poisson([250,300], [5,0], 500)
-    poisson3 = Poisson([300,300], [5,0], 500)
-    poisson4 = Poisson([400,300], [5,0], 500)
-    poisson5 = Poisson([450,300], [5,0], 500)
-    poisson6 = Poisson([200,10], [5,0], 500)
-    poisson7 = Poisson([-200,0], [5,0], 500)
-    poisson12 = Poisson([-200,0], [5,0], 500)
-    poisson8 = Poisson([250,-300], [5,0], 500)
-    poisson9 = Poisson([400,-325], [5,0], 500)
-    poisson10 = Poisson([200,400], [5,0], 500)
-    poisson11 = Poisson([200,400], [5,0], 500)
-    poisson13 = Poisson([-150,-200],[3,1], 500)
-    poisson14 = Poisson([-100,-200],[-2,0], 500)
-    poisson15 = Poisson([-50,250],[3,0],500)
-    poisson16 = Poisson([-75,150], [0,-100], 500)
-    poisson17 = Poisson([0,5],[0,0],500)
-    poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
-    nouvelle_simu = Simulation(poissons, [predateur,predateur2],liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
-    nouvelle_simu.calcul_tableaux()
-    fenetre = graphe_pos(nouvelle_simu)
-    print(f"le parametre d'ordre à 2 secondes est de {nouvelle_simu.moyennage_parametre_ordre(int(2.0/nouvelle_simu.dt),200)}")
 
 def generate_poissons():
     return [Poisson([rng.random()*500, rng.random()*500-250],
@@ -849,4 +763,4 @@ def recherche_alignement():
 
         print(f"le parametre d'ordre est de {nouvelle_simu.parametre_ordre}")
 
-test_3()
+
