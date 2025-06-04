@@ -473,7 +473,7 @@ class GUI:
         else:
             self.ani = FuncAnimation(self.fig, self.update_non_suivi, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=True) 
         if gif:
-            writer = PillowWriter(fps=15,
+            writer = PillowWriter(fps=30,
                                 metadata=dict(artist='Maxence'),
                                 bitrate=1800)
             self.ani.save('test.gif', writer=writer)
