@@ -1,6 +1,6 @@
 ###ca fait une boite ou les poissons et les prédateurs sont enfermés
 def boite():
-    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
     predateur = Predateur([0,0], [0,15], 600)
@@ -18,7 +18,7 @@ def boite():
 
 ###ca fait une batiment avec 2 assaillants et 17 civils
 def batiment1():
-    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
     predateur = Predateur([0,0], [0,15], 600)
@@ -63,7 +63,7 @@ def batiment1():
 
 ### verifiaction que le mur coupe la vision
 def test_avec_mur():
-    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
     N = 500
     ligne = Obstacle([0,300,0,-300])
@@ -118,9 +118,9 @@ def test_sans_mur():
     fenetre = GUI(nouvelle_simu)
 
 def cas_test1():
-    distance_seuil = 100; alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 0; a_rng = 0
+    alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 0; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 250
     
     poisson1 = Poisson([-100,100], [100,-100], 500)
     poisson2 = Poisson([-100,-100], [100,100], 500)
@@ -132,9 +132,9 @@ def cas_test1():
     fenetre = GUI(nouvelle_simu)
 
 def cas_test2():
-    distance_seuil = 100; alpha_cohesion = 0; alpha_separation = 10000; alpha_alignement = 0; a_rng = 0
+    alpha_cohesion = 0; alpha_separation = 10000; alpha_alignement = 0; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 250
     
     poisson1 = Poisson([-100,100], [100,-100], 500)
     poisson2 = Poisson([-100,-100], [100,100], 500)
@@ -160,9 +160,9 @@ def cas_test3():
     fenetre = GUI(nouvelle_simu,1,500)
     
 def cas_test4():
-    distance_seuil = 100; alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 10; a_rng = 0
+    alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 10; a_rng = 0
     r_cohesion = 400; r_separation = 60; r_alignement = 100; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 250
     
     poisson1 = Poisson([-100,100], [100,-100], 500)
     poisson2 = Poisson([-100,-100], [100,100], 500)
@@ -175,9 +175,9 @@ def cas_test4():
 
 #### PENSER A MODIF LES VALEURS D'ANGLE VISION
 def cas_test5():
-    distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
+    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 250
     
     poisson1 = Poisson([-50,50], [0,100], 500)
     poisson2 = Poisson([0,0], [100,0], 500)
