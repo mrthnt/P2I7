@@ -455,7 +455,7 @@ class Simulation :
    
 
 class GUI:
-    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 300, suivi = True):
+        def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 300, suivi = True, gif = False):
         self.simulation = simulation
         
         self.coord_lim = coord_lim #utile pour update_suivi(frame)
@@ -474,7 +474,13 @@ class GUI:
             self.ani = FuncAnimation(self.fig, self.update_suivi, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=False)
         else:
             self.ani = FuncAnimation(self.fig, self.update_non_suivi, frames=np.arange(0,self.simulation.N-1,1), interval=self.simulation.dt*1000/vitesse_lecture, blit=True) 
-        plt.show()
+        if gif:
+            writer = PillowWriter(fps=15,
+                                metadata=dict(artist='Maxence'),
+                                bitrate=1800)
+            self.ani.save('test.gif', writer=writer)
+        else:
+            plt.show()
     
     def init_triangles(self):
         """
