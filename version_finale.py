@@ -464,10 +464,10 @@ class GUI:
         self.ax.set_ylim(-coord_lim, coord_lim)
         self.ax.set_aspect('equal')
     
-            self.obstacles = []
-            self.init_obstacles()
-            self.triangles = []
-            self.init_triangles()
+        self.obstacles = []
+        self.init_obstacles()
+        self.triangles = []
+        self.init_triangles()
 
         if suivi == True:
             self.ax.grid()
