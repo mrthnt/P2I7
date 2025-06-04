@@ -161,7 +161,7 @@ class Simulation :
             
                     cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
                     
-                    if cos_angle > cos_angle_vision :
+                    if cos_angle > cos_angle_vision and self.voisin_visible(poisson,voisin,i):
 
                         if distance_poisson_voisin_i < self.rayon_separation:
 
