@@ -175,7 +175,7 @@ def cas_test4():
 
 #### PENSER A MODIF LES VALEURS D'ANGLE VISION
 def cas_test5():
-    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 6; a_rng = 60
+    alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 6; a_rng = 0
     r_cohesion = 600; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
     N = 90
     
