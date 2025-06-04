@@ -171,20 +171,18 @@ class Simulation :
             
                     cos_angle = np.dot(vecteur_poisson_voisin, vecteur_vitesse) / (norme_vitesse *distance_poisson_voisin_i)
                     
-                    if cos_angle > cos_angle_vision and self.voisin_visible(poisson,voisin,i):
+                    if cos_angle > cos_angle_vision :
 
-                        comportement, rayon = liste_rayon_ordonnes[0]
-                        #print(liste_rayon_ordonnes[0][1])
-                        if distance_poisson_voisin_i < int(liste_rayon_ordonnes[0][1]):
-                            dico_voisin[liste_rayon_ordonnes[0][0]].append(voisin)
+                        if distance_poisson_voisin_i < self.rayon_separation:
 
-                        elif distance_poisson_voisin_i < int(liste_rayon_ordonnes[1][1]):
-                            dico_voisin[liste_rayon_ordonnes[1][0]].append(voisin)
+                            poisson.poissons_dans_rayon_separation.append(voisin)
+                        if distance_poisson_voisin_i > self.rayon_separation and distance_poisson_voisin_i < self.rayon_alignement:
 
-                        elif distance_poisson_voisin_i < int(liste_rayon_ordonnes[2][1]):
-                            dico_voisin[liste_rayon_ordonnes[2][0]].append(voisin)
+                            poisson.poissons_dans_rayon_alignement.append(voisin)
+                        if distance_poisson_voisin_i > self.rayon_alignement and distance_poisson_voisin_i < self.rayon_cohesion:
 
-                    #print(liste_rayon_ordonnes[0])
+                            poisson.poissons_dans_rayon_cohesion.append(voisin)
+                            
         poisson.poissons_dans_rayon_cohesion   = dico_voisin['cohesion']
         poisson.poissons_dans_rayon_alignement = dico_voisin['alignement']
         poisson.poissons_dans_rayon_separation = dico_voisin['separation']
