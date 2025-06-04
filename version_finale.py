@@ -455,14 +455,14 @@ class Simulation :
    
 
 class GUI:
-        def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 300, suivi = True, gif = False):
-            self.simulation = simulation
+    def __init__(self, simulation, vitesse_lecture = 1.0, coord_lim = 300, suivi = True, gif = False):
+        self.simulation = simulation
             
-            self.coord_lim = coord_lim #utile pour update_suivi(frame)
-            self.fig, self.ax = plt.subplots()
-            self.ax.set_xlim(-coord_lim, coord_lim)
-            self.ax.set_ylim(-coord_lim, coord_lim)
-            self.ax.set_aspect('equal')
+        self.coord_lim = coord_lim #utile pour update_suivi(frame)
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_xlim(-coord_lim, coord_lim)
+        self.ax.set_ylim(-coord_lim, coord_lim)
+        self.ax.set_aspect('equal')
     
             self.obstacles = []
             self.init_obstacles()
