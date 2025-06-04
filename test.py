@@ -122,8 +122,8 @@ def cas_test1():
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
     N = 250
     
-    poisson1 = Poisson([-100,100], [100,-100], 500)
-    poisson2 = Poisson([-100,-100], [100,100], 500)
+    poisson1 = Poisson([-100,100], [500,-500], 500)
+    poisson2 = Poisson([-100,-100], [500,500], 500)
     predateurs = []
     liste_obstacle = []
     poissons = [poisson1,poisson2]
@@ -136,8 +136,8 @@ def cas_test2():
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
     N = 250
     
-    poisson1 = Poisson([-100,100], [100,-100], 500)
-    poisson2 = Poisson([-100,-100], [100,100], 500)
+    poisson1 = Poisson([-100,100], [500,-500], 500)
+    poisson2 = Poisson([-100,-100], [500,500], 500)
     predateurs = []
     liste_obstacle = []
     poissons = [poisson1,poisson2]
@@ -150,8 +150,8 @@ def cas_test3():
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
     N = 500
     
-    poisson1 = Poisson([-100,100], [100,-100], 500)
-    poisson2 = Poisson([-100,-100], [100,100], 500)
+    poisson1 = Poisson([-100,100], [500,-500], 500)
+    poisson2 = Poisson([-100,-100], [500,500], 500)
     predateurs = []
     liste_obstacle = []
     poissons = [poisson1,poisson2]
@@ -164,8 +164,8 @@ def cas_test4():
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
     N = 250
     
-    poisson1 = Poisson([-100,100], [100,-100], 500)
-    poisson2 = Poisson([-100,-100], [100,100], 500)
+    poisson1 = Poisson([-100,100], [500,-500], 500)
+    poisson2 = Poisson([-100,-100], [500,500], 500)
     predateurs = []
     liste_obstacle = []
     poissons = [poisson1,poisson2]
@@ -179,8 +179,8 @@ def cas_test5():
     r_cohesion = 400; r_separation = 60; r_alignement = 200; r_predation = 600; r_proies = 700; 
     N = 250
     
-    poisson1 = Poisson([-50,50], [0,100], 500)
-    poisson2 = Poisson([0,0], [100,0], 500)
+    poisson1 = Poisson([-50,50], [0,500], 500)
+    poisson2 = Poisson([0,0], [500,0], 500)
     predateurs = []
     liste_obstacle = []
     poissons = [poisson1,poisson2]
