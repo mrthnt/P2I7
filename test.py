@@ -65,21 +65,21 @@ def batiment1():
 def test_avec_mur():
     alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 150
     ligne = Obstacle([0,300,0,-300])
     liste_obstacle = [ligne]
-    poisson1 = Poisson([100,300], [5,0], 500)
-    poisson2 = Poisson([150,300], [5,0], 500)
-    poisson3 = Poisson([100,300], [5,0], 500)
-    poisson4 = Poisson([100,300], [5,0], 500)
-    poisson5 = Poisson([150,300], [5,0], 500)
+    poisson1 = Poisson([50,110], [5,0], 500)
+    poisson2 = Poisson([60,80], [5,0], 500)
+    poisson3 = Poisson([110,30], [5,0], 500)
+    poisson4 = Poisson([20,30], [5,0], 500)
+    poisson5 = Poisson([80,300], [5,0], 500)
     poisson6 = Poisson([100,10], [5,0], 500)
-    poisson7 = Poisson([-100,0], [5,0], 500)
+    poisson7 = Poisson([-100,10], [5,0], 500)
     poisson12 = Poisson([-100,0], [5,0], 500)
     poisson8 = Poisson([-150,-300], [5,0], 500)
     poisson9 = Poisson([100,-325], [5,0], 500)
     poisson10 = Poisson([100,400], [5,0], 500)
-    poisson11 = Poisson([100,400], [5,0], 500)
+    poisson11 = Poisson([45,400], [5,0], 500)
     poisson13 = Poisson([-150,-200],[3,1], 500)
     poisson14 = Poisson([-100,-200],[-2,0], 500)
     poisson15 = Poisson([-50,250],[3,0],500)
@@ -88,25 +88,25 @@ def test_avec_mur():
     poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu)
+    fenetre = GUI(nouvelle_simu,1,500)
 
 def test_sans_mur():
     distance_seuil = 100; alpha_cohesion = 20; alpha_separation = 10000; alpha_alignement = 10; a_rng = 60
     r_cohesion = 400; r_separation = 60; r_alignement = 5; r_predation = 600; r_proies = 700; 
-    N = 500
+    N = 150
     liste_obstacle = []
-    poisson1 = Poisson([100,300], [5,0], 500)
-    poisson2 = Poisson([150,300], [5,0], 500)
-    poisson3 = Poisson([100,300], [5,0], 500)
-    poisson4 = Poisson([100,300], [5,0], 500)
-    poisson5 = Poisson([150,300], [5,0], 500)
+    poisson1 = Poisson([50,110], [5,0], 500)
+    poisson2 = Poisson([60,80], [5,0], 500)
+    poisson3 = Poisson([110,30], [5,0], 500)
+    poisson4 = Poisson([20,30], [5,0], 500)
+    poisson5 = Poisson([80,300], [5,0], 500)
     poisson6 = Poisson([100,10], [5,0], 500)
-    poisson7 = Poisson([-100,0], [5,0], 500)
+    poisson7 = Poisson([-100,10], [5,0], 500)
     poisson12 = Poisson([-100,0], [5,0], 500)
     poisson8 = Poisson([-150,-300], [5,0], 500)
     poisson9 = Poisson([100,-325], [5,0], 500)
     poisson10 = Poisson([100,400], [5,0], 500)
-    poisson11 = Poisson([100,400], [5,0], 500)
+    poisson11 = Poisson([45,400], [5,0], 500)
     poisson13 = Poisson([-150,-200],[3,1], 500)
     poisson14 = Poisson([-100,-200],[-2,0], 500)
     poisson15 = Poisson([-50,250],[3,0],500)
@@ -115,7 +115,7 @@ def test_sans_mur():
     poissons = [poisson1,poisson2,poisson3,poisson4,poisson5,poisson6,poisson7,poisson8,poisson9,poisson10,poisson11,poisson12,poisson13,poisson14,poisson15,poisson16]
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
-    fenetre = GUI(nouvelle_simu)
+    fenetre = GUI(nouvelle_simu,1,500)
 
 def cas_test1():
     alpha_cohesion = 0; alpha_separation = 0; alpha_alignement = 0; a_rng = 0
@@ -187,3 +187,34 @@ def cas_test5():
     nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
     nouvelle_simu.calcul_tableaux()
     fenetre = GUI(nouvelle_simu,1,300,suivi=False)
+    
+def cas_test_6():
+    alpha_cohesion = 20; alpha_separation = 1000; alpha_alignement = 10; a_rng = 0
+    r_cohesion = 1000; r_separation = 90; r_alignement = 100; r_predation = 600; r_proies = 700; 
+    N = 120
+    
+    poisson1 = Poisson([-201,-250], [0,500], 500)
+    poisson2 = Poisson([201,-250], [0,200], 500)
+    predateurs = []
+    poissons = [poisson1,poisson2]
+    ligne = Obstacle([0,0,0,-300])
+    liste_obstacle = [ligne]
+    
+    nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu.calcul_tableaux()
+    fenetre = GUI(nouvelle_simu,suivi=False)
+
+def cas_test_7():
+    alpha_cohesion = 20; alpha_separation = 1000; alpha_alignement = 10; a_rng = 0
+    r_cohesion = 1000; r_separation = 90; r_alignement = 100; r_predation = 600; r_proies = 700; 
+    N = 120
+    
+    poisson1 = Poisson([-201,-250], [0,500], 500)
+    poisson2 = Poisson([201,-250], [0,200], 500)
+    predateurs = []
+    poissons = [poisson1,poisson2]
+    liste_obstacle = []
+    
+    nouvelle_simu = Simulation(poissons, predateurs,liste_obstacle, N, 0.01, alpha_cohesion, alpha_separation, alpha_alignement, a_rng, r_cohesion, r_separation, r_alignement, r_predation, r_proies)
+    nouvelle_simu.calcul_tableaux()
+    fenetre = GUI(nouvelle_simu,suivi=False)
